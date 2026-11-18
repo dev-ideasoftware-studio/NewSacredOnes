@@ -43,13 +43,16 @@
         .hero { position: relative; overflow: hidden; isolation: isolate; color: #f6f1e7; padding: clamp(28px, 4vw, 48px) 0 clamp(32px, 4vw, 56px); background: #2b3a36; }
         .hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
         .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(112deg, rgba(31, 47, 42, .9) 0%, rgba(38, 56, 50, .8) 34%, rgba(55, 76, 69, .5) 56%, rgba(72, 92, 84, .4) 74%, rgba(36, 50, 46, .72) 100%); }
-        .hero-in { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 48px); align-items: center; }
-        .hero-copy { max-width: 34rem; }
+        .hero-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); align-items: center; }
+        .hero-copy { max-width: 44rem; }
+        .hero { min-height: min(78vh, 680px); display: flex; align-items: center; }
+        .hero > .wrap { width: min(1280px, 100% - 40px); }
+        .hero-motto { margin-top: 14px; font: 400 1.25rem/1.3 var(--md-font-brand); color: #e3c27a; text-shadow: 0 1px 10px rgba(0,0,0,.35); }
         .hero-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
         .hero-brand img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: var(--md-elev-2); -webkit-mask-image: radial-gradient(circle, #000 69%, transparent 70.5%); mask-image: radial-gradient(circle, #000 69%, transparent 70.5%); }
         .hero-brand span { font: 600 .8125rem/1.4 var(--md-font-plain); letter-spacing: .12em; text-transform: uppercase; color: #dcd3c2; }
         .hero h1 { color: #faf6ee; text-shadow: 0 2px 18px rgba(0, 0, 0, .28); }
-        .hero .lede { margin-top: 22px; max-width: 42ch; color: #ebe4d6; font-size: 1.125rem; text-shadow: 0 1px 10px rgba(0, 0, 0, .3); }
+        .hero .lede { margin-top: 22px; max-width: 56ch; color: #ebe4d6; font-size: 1.125rem; text-shadow: 0 1px 10px rgba(0, 0, 0, .3); }
         .hero .btn-row .md-btn.outlined { color: #faf6ee; border-color: rgba(250, 246, 238, .7); }
         .hero-banner { margin: 0; position: relative; border-radius: var(--md-shape-xl); overflow: hidden; box-shadow: var(--md-elev-5); background: #fff; outline: 1px solid rgba(255, 255, 255, .22); }
         .hero-banner img { width: 100%; height: auto; }
@@ -100,6 +103,17 @@
         .park-cta { padding: 22px; border-radius: var(--md-shape-lg); background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); display: grid; gap: 10px; align-content: start; }
         .park-cta .md-on-variant { color: inherit; opacity: .85; }
         @media (max-width: 900px) { .park-grid { grid-template-columns: 1fr; grid-template-rows: 220px 180px 180px; } .park-photo.big { grid-row: auto; } .park-cards, .park-foot { grid-template-columns: 1fr; } }
+        .game-why { color: var(--md-on-surface-variant); line-height: 1.55; }
+        .game-why b { color: var(--md-on-surface); }
+        .game-why a { color: var(--md-tertiary); font-weight: 600; }
+        .shots { display: grid; gap: 12px; padding: 20px; }
+        .shots-main { margin: 0; background: #15110e; border-radius: var(--md-shape-lg); overflow: hidden; display: grid; place-items: center; }
+        .shots-main img { width: 100%; max-height: 62vh; object-fit: contain; }
+        .shots-cap { min-height: 1.5em; color: var(--md-on-surface-variant); }
+        .shots-thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .shots-thumbs button { padding: 0; border: 2px solid transparent; border-radius: var(--md-shape-sm); overflow: hidden; cursor: pointer; background: none; width: 96px; height: 64px; }
+        .shots-thumbs button[aria-pressed="true"] { border-color: var(--md-tertiary); }
+        .shots-thumbs img { width: 100%; height: 100%; object-fit: cover; }
         .two-up { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
         .site-col h2 { margin-bottom: 14px; }
         .site-col .md-list { margin-top: 24px; margin-left: -16px; }
@@ -410,16 +424,15 @@
                 <div class="wrap hero-in">
                     <div class="hero-copy">
                         <div class="hero-brand"><img src="assets/logo-emblem.jpg" alt="Sacred Ones emblem" width="56" height="56"><span>Oceti Sakowin · Fort Peck Reservation</span></div>
-                        <h1 class="md-display-large" id="hero-title">Give them a chance to dream again.</h1>
-                        <p class="lede">A nonprofit building youth technology jobs, a healing ancestral park, and the return of the buffalo. Heal. Educate. Protect. Empower.</p>
+                        <h1 class="md-display-large" id="hero-title">Play the game. Build a real Sioux village.</h1>
+                        <p class="lede">Sacred Ones is recreating an authentic Sioux village on the Fort Peck Reservation: a real place to stay, learn and gather. It starts online. Every village children build in Sacred Adventures shapes the real one, and the more they play, the closer it comes.</p>
+                        <p class="hero-motto">Give them a chance to dream again.</p>
                         <div class="btn-row">
-                            <a class="md-btn filled tertiary md-state" href="#donate">Support the dream</a>
-                            <a class="md-btn outlined md-state" href="#our-game">Play Sacred Adventures</a>
+                            <a class="md-btn filled tertiary md-state" href="#our-game">Play Sacred Adventures</a>
+                            <a class="md-btn outlined md-state" href="#park">See the village plan</a>
+                            <a class="md-btn text md-state" href="#donate" style="color:#faf6ee">Support the dream</a>
                         </div>
                     </div>
-                    <figure class="hero-banner">
-                        <img src="assets/banner-sacred-adventures.jpg" alt="Sacred Adventures: a 3D web-browser game. Build your own village, meet the people in first person, then manage the whole village from above. Kickstarter ready, 60 to 120 FPS, a non-violent cultural game." width="1526" height="1280" fetchpriority="high">
-                    </figure>
                 </div>
             </section>
 
@@ -460,14 +473,12 @@
                         <div class="game-foot">
                             <p class="keys">Move with WASD, arrows or touch · look with the mouse or drag</p>
                             <div class="btn-row">
+                                <button class="md-btn tonal md-state" id="shots-btn" type="button">See screenshots</button>
                                 <button class="md-btn tonal has-icon md-state" id="fs-btn" type="button"><svg aria-hidden="true"><use href="#i-fullscreen" /></svg> Full screen</button>
                                 <a class="md-btn text has-icon md-state" href="SacredAdventures/SacredOnes.html" target="_blank" rel="noopener noreferrer">New tab <svg aria-hidden="true"><use href="#i-open" /></svg></a>
                             </div>
                         </div>
-                        <div class="game-thumbs">
-                            <img src="assets/game-map.jpg" alt="Top-down village map with the compass ring" loading="lazy">
-                            <img src="assets/game-horse.jpg" alt="First-person view beside a tipi with a spirit horse" loading="lazy">
-                        </div>
+                        <p class="game-why"><b>Why a game?</b> Because this is a real-life project. The village children plan on screen is the village we are raising on the land: the same lodges, the same council arbor, the same fishing pool. <a href="#park">See the village plan</a></p>
                     </div>
                 </div>
             </section>
@@ -1006,6 +1017,16 @@
         </div>
     </dialog>
 
+    <dialog class="md-dialog" id="shots-dialog" aria-labelledby="shots-title" style="width:min(980px,96vw)">
+        <div class="shots">
+            <h2 class="md-headline-small" id="shots-title">Sacred Adventures screenshots</h2>
+            <figure class="shots-main"><img id="shots-big" src="assets/game-cover.jpg" alt=""></figure>
+            <p class="shots-cap md-body-medium" id="shots-cap"></p>
+            <div class="shots-thumbs" id="shots-thumbs"></div>
+            <div class="md-dialog-actions" style="padding-top:0"><button class="md-btn text md-state" id="shots-close" type="button">Close</button></div>
+        </div>
+    </dialog>
+
     <dialog class="md-dialog" id="photo-dialog" aria-label="Event photo" style="width:min(1100px,96vw)">
         <img id="photo-big" src="" alt="" style="width:100%;max-height:82vh;object-fit:contain;background:#15110e">
         <div class="md-dialog-actions" style="padding:8px 16px 12px"><button class="md-btn text md-state" id="photo-close" type="button">Close</button></div>
@@ -1081,6 +1102,15 @@
         const pd = $('#photo-dialog');
         $('#gallery-grid').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const i = b.querySelector('img'); $('#photo-big').src = i.src; $('#photo-big').alt = i.alt; pd.showModal(); });
         $('#photo-close').addEventListener('click', () => md.closeDialog(pd));
+
+        // ================= GAME SCREENSHOTS =================
+        const SHOTS = [['assets/game-cover.jpg', 'Village view: place buildings on the map, then step inside them.'], ['assets/game-map.jpg', 'The compass map: your whole village from above.'], ['assets/game-horse.jpg', 'First-person view beside a tipi, with a spirit horse.'], ['assets/game-fishing.jpg', 'Fishing at the sacred pool.']];
+        const shotsDlg = $('#shots-dialog');
+        function showShot(i) { $('#shots-big').src = SHOTS[i][0]; $('#shots-big').alt = SHOTS[i][1]; $('#shots-cap').textContent = SHOTS[i][1]; $$('#shots-thumbs button').forEach((b, k) => b.setAttribute('aria-pressed', k === i)); }
+        $('#shots-thumbs').innerHTML = SHOTS.map((sh, i) => `<button type="button" data-i="${i}" aria-label="Screenshot ${i + 1}: ${esc(sh[1])}"><img src="${sh[0]}" alt=""></button>`).join('');
+        $('#shots-thumbs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) showShot(+b.dataset.i); });
+        $('#shots-btn').addEventListener('click', () => { showShot(0); shotsDlg.showModal(); });
+        $('#shots-close').addEventListener('click', () => md.closeDialog(shotsDlg));
 
         // ================= STORY DIALOG =================
         const sd = $('#story-dialog'); let sdOpener = null;
