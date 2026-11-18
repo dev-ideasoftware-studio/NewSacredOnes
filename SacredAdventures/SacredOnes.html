@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="Sacred Adventures - 3D Wildlife Update." />
+    <title>Sacred Adventures</title>
+
+    <style>
+        .sr-only {
+            position: absolute !important;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0f1712;
+            color: #FDFBF7;
+            font-family: "Nunito", sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+    </style>
+
+    <!-- Inline Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        :root {
+            --sage-900: #1e2610;
+            --sage-800: #303b1a;
+            --sage-600: #556B2F;
+            --sage-100: #e3ebe3;
+            --clay-600: #C04E38;
+            --cream: #FDFBF7;
+            --parchment: #fcf5e5;
+            --midnight-900: #0f172a;
+            --gold-500: #facc15;
+
+            --container-bg: rgba(20, 30, 20, 0.95);
+            --ui-border: 2px solid var(--sage-600);
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+        }
+
+        #main-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #fpv-viewport {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        #fpv-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- 1. MAP VIEW --- */
+        #mapview-wrapper {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: clamp(140px, 15vw, 180px);
+            height: clamp(140px, 15vw, 180px);
+            z-index: 100;
+            border-radius: 50%;
+            border: 2px solid var(--gold-500);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+
+        #day-night-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: conic-gradient(var(--midnight-900) 0deg, var(--clay-600) 90deg, var(--gold-500) 180deg, var(--clay-700) 270deg, var(--midnight-900) 360deg);
+            z-index: 90;
+            transition: transform 0.1s linear;
+        }
+
+        #mapview-container {
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 38, 16, 0.6);
+            border-radius: 50%;
+            z-index: 100;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #mapview-container .canvas-wrapper {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        #waypoint-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid #00BFFF;
+            z-index: 95;
+            top: 50%;
+            left: 50%;
+            transform-origin: center clamp(70px, 10vw, 110px);
+            display: none;
+            filter: drop-shadow(0 0 5px #00BFFF);
+        }
+
+        /* --- 2. STATS PANEL --- */
+        #adventure-panel {
+            position: absolute;
+            bottom: 140px;
+            left: 20px;
+            width: clamp(300px, 35vw, 400px);
+            background: var(--container-bg);
+            border: var(--ui-border);
+            border-radius: 16px;
+            padding: 16px;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .panel-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-portrait {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid var(--gold-500);
+            background: #333 url('../assets/wp/2025/05/cropped-Example.png') center/cover;
+            background-color: var(--sage-800);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .stats-compact {
+            flex: 1;
+            font-size: 15px;
+            color: var(--parchment);
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+        }
+
+        .inventory-grid {
+            display: flex;
+            gap: 16px;
+            margin-top: 6px;
+            font-weight: bold;
+            color: var(--gold-500);
+        }
+
+        .cards-drawer {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            min-height: 40px;
+        }
+
+        /* --- 3. KEYPAD --- */
+        #mobile-controls {
+            position: absolute;
+            bottom: 320px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(2, 60px);
+            gap: 8px;
+            z-index: 1000;
+            pointer-events: auto;
+        }
+
+        .ctrl-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(66, 82, 36, 0.4);
+            border: 2px solid var(--sage-100);
+            color: var(--cream);
+            font-size: 24px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            user-select: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .ctrl-btn:active {
+            background: var(--clay-600);
+            transform: scale(0.95);
+            border-color: var(--gold-500);
+        }
+
+        .ctrl-up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .ctrl-left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .ctrl-down {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .ctrl-right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        /* --- 4. EVENT LOG --- */
+        #event-log {
+            position: absolute;
+            bottom: 140px;
+            right: 20px;
+            width: clamp(300px, 35vw, 400px);
+            height: 160px;
+            background: var(--container-bg);
+            border: var(--ui-border);
+            border-radius: 16px;
+            padding: 16px;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            overflow-y: auto;
+            font-size: 14px;
+            color: var(--sage-100);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #event-log::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #event-log::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        #event-log::-webkit-scrollbar-thumb {
+            background: var(--sage-600);
+            border-radius: 4px;
+            border: 1px solid var(--sage-100);
+        }
+
+        #event-log p {
+            margin: 4px 0;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 2px;
+        }
+
+        .log-new {
+            color: var(--gold-500);
+            font-weight: bold;
+        }
+
+        .log-alert {
+            color: #ef4444;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        /* --- 5. BOTTOM PROMPT BAR --- */
+        #prompt-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            min-height: 120px;
+            background: rgba(15, 23, 18, 0.95);
+            border-top: 2px solid var(--gold-500);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            z-index: 2000;
+            gap: 10px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .guide-actions {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            width: 100%;
+            max-width: 600px;
+            justify-content: center;
+            padding-bottom: 4px;
+        }
+
+        .guide-actions::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* WCAG AAA COMPLIANT BUTTONS */
+        .guide-btn-sm {
+            background: #0d1209;
+            /* Very Dark Green/Black for contrast */
+            border: 2px solid var(--sage-600);
+            color: #ffffff;
+            /* Pure White */
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .guide-btn-sm:hover {
+            background: var(--sage-600);
+            border-color: var(--gold-500);
+        }
+
+        /* PURPLE QUEST BUTTON */
+        .btn-quest {
+            background: #581c87;
+            /* Purple-900 */
+            border-color: #a855f7;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-quest:hover {
+            background: #7e22ce;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+        }
+
+        #llm-input-wrapper {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            display: flex;
+        }
+
+        #llm-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--sage-600);
+            color: var(--cream);
+            padding: 12px 16px;
+            border-radius: 24px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #llm-input:focus {
+            border-color: var(--gold-500);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        #llm-submit {
+            position: absolute;
+            right: 4px;
+            top: 4px;
+            bottom: 4px;
+            background: var(--gold-500);
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            padding: 0 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- HUD EXTRAS --- */
+        #fpv-room-tag {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 38, 16, 0.8);
+            border: 1px solid var(--sage-600);
+            padding: 8px 24px;
+            border-radius: 20px;
+            color: var(--cream);
+            z-index: 50;
+            backdrop-filter: blur(4px);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #system-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--sage-100);
+            z-index: 50;
+            line-height: 1.4;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+        }
+
+        #system-status span {
+            letter-spacing: 1px;
+        }
+
+        .status-ok {
+            color: #4ade80;
+        }
+
+        .status-active {
+            color: var(--gold-500);
+        }
+
+        /* Modals */
+        .modal-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--container-bg);
+            border: 2px solid var(--clay-600);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            z-index: 2000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            width: 300px;
+        }
+
+        .modal-box h2 {
+            margin: 0 0 8px;
+            color: var(--gold-500);
+        }
+
+        .modal-box p {
+            color: var(--sage-100);
+            margin-bottom: 16px;
+        }
+
+        .action-btn {
+            background: var(--sage-600);
+            color: var(--cream);
+            border: 1px solid var(--sage-100);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .action-btn:hover {
+            background: var(--sage-700);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            #adventure-panel {
+                width: 160px;
+                left: 10px;
+                padding: 10px;
+                bottom: 130px;
+                display: none;
+            }
+
+            #mobile-controls {
+                bottom: 300px;
+                transform: translateX(-50%) scale(0.9);
+            }
+
+            #event-log {
+                width: 90%;
+                left: 5%;
+                right: auto;
+                bottom: 140px;
+                height: 140px;
+                pointer-events: auto;
+                opacity: 0.9;
+                background: var(--container-bg);
+                border: var(--ui-border);
+            }
+
+            #prompt-bar {
+                padding: 10px;
+                min-height: 100px;
+            }
+
+            .guide-actions {
+                max-width: 100%;
+                justify-content: flex-start;
+            }
+
+            #llm-input {
+                font-size: 14px;
+            }
+
+            .guide-btn-sm {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading -->
+    <div id="loading-overlay"
+        style="position:fixed;inset:0;background:#1e2610;z-index:9999;display:flex;align-items:center;justify-content:center;color:#FDFBF7;font-family:'Nunito',sans-serif;font-weight:800;">
+        <h2>LOADING 3D ASSETS...</h2>
+    </div>
+
+    <div id="main-container">
+
+        <!-- 1. MAP -->
+        <div id="mapview-wrapper">
+            <div id="day-night-ring">
+                <div id="waypoint-arrow"></div>
+            </div>
+            <div id="mapview-container">
+                <div class="canvas-wrapper"></div>
+            </div>
+        </div>
+
+        <!-- HUD -->
+        <div id="system-status">
+            <div>SYSTEM: <span class="status-ok">ONLINE</span></div>
+            <div>VISUAL: <span class="status-ok">STABLE</span></div>
+            <div>MOTION: <span id="turn-indicator" class="status-active">IDLE</span></div>
+        </div>
+        <div id="fpv-viewport"></div>
+        <div id="fpv-room-tag">SACRED GROVE</div>
+
+        <!-- 2. STATS -->
+        <div id="adventure-panel">
+            <div class="panel-row">
+                <div class="avatar-portrait"></div>
+                <div class="stats-compact">
+                    <div class="stat-line"><span>Health</span> <span id="stat-hp"
+                            style="color:var(--clay-600)">100</span></div>
+                    <div class="stat-line"><span>Hunger</span> <span id="stat-hunger">Full</span></div>
+                    <div class="inventory-grid">
+                        <span id="res-wood">🪵 0</span>
+                        <span id="res-food">🌽 0</span>
+                        <span id="res-water">💧 0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cards-drawer" id="cards-container"></div>
+        </div>
+
+        <!-- 3. KEYPAD -->
+        <div id="mobile-controls">
+            <div class="ctrl-btn ctrl-up">▲</div>
+            <div class="ctrl-btn ctrl-left">◀</div>
+            <div class="ctrl-btn ctrl-down">▼</div>
+            <div class="ctrl-btn ctrl-right">▶</div>
+        </div>
+
+        <!-- 4. LOG -->
+        <div id="event-log">
+            <p class="log-new">Welcome to the Sacred Grove.</p>
+            <p>The wilderness awaits.</p>
+        </div>
+
+        <!-- 5. PROMPT BAR (Bottom) -->
+        <div id="prompt-bar">
+            <div class="guide-actions">
+                <button class="guide-btn-sm btn-quest" onclick="handleGuideAction('investigate')">🔮
+                    Investigate</button>
+                <button class="guide-btn-sm" onclick="handleGuideAction('look')">👁️ Look</button>
+                <button class="guide-btn-sm" onclick="handleGuideAction('search')">🔍 Search</button>
+                <button class="guide-btn-sm" onclick="handleGuideAction('rest')">⛺ Rest</button>
+                <button class="guide-btn-sm" onclick="handleGuideAction('help')">❓ Help</button>
+            </div>
+            <div id="llm-input-wrapper">
+                <input type="text" id="llm-input" placeholder="What do you want to do? (e.g., 'Look around')"
+                    autocomplete="off">
+                <button id="llm-submit">➤</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- QUEST MODAL (RESTORED) -->
+    <div id="quest-modal" class="modal-box hidden">
+        <h2>Quest Started</h2>
+        <div style="font-size:40px; margin:10px;">⛺</div>
+        <h3>Establish Camp</h3>
+        <p>This ancient site is perfect. Gather resources to build a shelter.</p>
+        <p id="quest-progress" style="color:var(--gold-500); font-weight:bold;">Wood Needed: 0 / 3</p>
+        <button class="action-btn" onclick="closeQuest()">Accept</button>
+    </div>
+
+    <!-- Import Map for Modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <!-- Main Game Module -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+        import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+        // --- CONFIG ---
+        const TILE_SIZE = 4;
+        const MAP_SIZE = 60;
+
+        const T_GRASS = 0, T_FOREST = 1, T_WATER = 2, T_ROCK = 3;
+
+        let scene, camera, renderer, fpvCamera, fpvRenderer;
+        let map = [];
+        let globalFog;
+
+        // Updated Player Stats
+        let player = {
+            x: 30, y: 30, rot: 0,
+            hp: 100,
+            hungerVal: 0,
+            wood: 0, corn: 0, water: 0,
+            cards: []
+        };
+
+        let gameObjects = [], floatingTexts = [], deers = [], camp = null;
+        let gameTime = 8.0; // Starts at 8:00 AM
+        let sunlight, ambientLight;
+        let questActive = false;
+
+        // Controls
+        const keys = { w: false, a: false, s: false, d: false };
+
+        // --- DEER CONFIG ---
+        const DEER_VARIANTS = [
+            { name: "Doe", scale: 0.5, color: 0x8D6E63, antlers: 'none', muscle: 1.0, neckThick: 0.75 },
+            { name: "Stag", scale: 0.6, color: 0x5D4037, antlers: 'branched', muscle: 1.2, neckThick: 0.95, mane: true }
+        ];
+
+        function init() {
+            scene = new THREE.Scene();
+            globalFog = new THREE.FogExp2(0xabc6d6, 0.03); // Initial fog is neutral grey-blue
+            scene.fog = globalFog;
+            scene.background = new THREE.Color(0x0f1712);
+
+            // Map View
+            const mapWrap = document.querySelector('#mapview-container .canvas-wrapper');
+            const frustum = 120;
+            camera = new THREE.OrthographicCamera(-frustum, frustum, frustum, -frustum, 1, 1000);
+            camera.position.set(0, 200, 0); camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: false });
+            renderer.setSize(mapWrap.clientWidth, mapWrap.clientHeight);
+            mapWrap.appendChild(renderer.domElement);
+
+            // FPV View
+            const fpvWrap = document.getElementById('fpv-viewport');
+            fpvCamera = new THREE.PerspectiveCamera(70, fpvWrap.clientWidth / fpvWrap.clientHeight, 0.1, 200);
+            fpvRenderer = new THREE.WebGLRenderer({ antialias: true });
+            fpvRenderer.setSize(fpvWrap.clientWidth, fpvWrap.clientHeight);
+            fpvRenderer.shadowMap.enabled = true;
+            fpvWrap.appendChild(fpvRenderer.domElement);
+
+            setupLights();
+            generate3DWorld();
+            spawnDecorations();
+            spawnAnimals();
+            spawnCampQuest(); // Adds camp near start
+            createPlayerMarker();
+
+            setupControls();
+            window.addEventListener('resize', onResize);
+            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('keyup', onKeyUp);
+
+            const ld = document.getElementById('loading-overlay');
+            if (ld) ld.remove();
+
+            animate();
+            log("Systems Online. Keyboard Active.", true);
+
+            // Setup LLM Input
+            document.getElementById('llm-submit').addEventListener('click', handleLLMInput);
+            document.getElementById('llm-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLLMInput();
+            });
+        }
+
+        window.log = log;
+        window.closeQuest = () => {
+            document.getElementById('quest-modal').classList.add('hidden');
+            questActive = true;
+            log("Quest Accepted: Gather Wood.", true);
+        };
+
+        window.handleGuideAction = (action) => {
+            if (action === 'investigate') {
+                if (camp) {
+                    const dx = player.x - 32; // Camp is at 32
+                    const dy = player.y - 32;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 4) {
+                        document.getElementById('quest-modal').classList.remove('hidden');
+                    } else {
+                        let dir = "";
+                        if (Math.abs(dx) > Math.abs(dy)) dir = dx > 0 ? "West" : "East";
+                        else dir = dy > 0 ? "North" : "South";
+                        log(`You sense a campsite to the ${dir}.`, true);
+                        spawnFloatingText("?", "#a855f7", camp.position);
+                    }
+                }
+            } else if (action === 'look') {
+                log("You look around. Tall pines sway in the wind.", true);
+            } else if (action === 'search') {
+                log("Searching area for resources...", true);
+                checkCollisions();
+            } else if (action === 'rest') {
+                player.hp = Math.min(100, player.hp + 5);
+                player.hungerVal = Math.min(100, player.hungerVal + 5);
+                updateUI();
+                log("You rest for a moment. (+5 HP, Hunger+)", true);
+            } else if (action === 'help') {
+                log("Controls: WASD/Arrows to move. Use buttons below for actions.", true);
+            }
+        };
+
+        function handleLLMInput() {
+            const inp = document.getElementById('llm-input');
+            const val = inp.value.trim();
+            if (val) {
+                log(`You: ${val}`, true);
+                setTimeout(() => {
+                    log(`The spirits hear your thought: "${val}"...`, false);
+                }, 500);
+                inp.value = '';
+            }
+        }
+
+        function setupLights() {
+            sunlight = new THREE.DirectionalLight(0xfffaed, 1.2);
+            sunlight.position.set(50, 100, 20);
+            sunlight.castShadow = true;
+            sunlight.shadow.mapSize.set(2048, 2048);
+            sunlight.shadow.camera.near = 0.5;
+            sunlight.shadow.camera.far = 500;
+            sunlight.shadow.camera.left = -100;
+            sunlight.shadow.camera.right = 100;
+            sunlight.shadow.camera.top = 100;
+            sunlight.shadow.camera.bottom = -100;
+            scene.add(sunlight);
+
+            ambientLight = new THREE.HemisphereLight(0x425224, 0x0f172a, 0.4);
+            scene.add(ambientLight);
+        }
+
+        function updateDayNightCycle() {
+            const dayDuration = 24.0;
+            const time = gameTime % dayDuration;
+
+            const deg = (time / dayDuration) * 360;
+            document.getElementById('day-night-ring').style.transform = `rotate(${deg}deg)`;
+
+            const sunAngle = ((time - 6) / dayDuration) * Math.PI * 2;
+            const sunRadius = 150;
+
+            sunlight.position.x = Math.cos(sunAngle) * sunRadius;
+            sunlight.position.y = Math.sin(sunAngle) * sunRadius;
+            sunlight.position.z = 20;
+
+            const sunHeight = Math.sin(sunAngle);
+            sunlight.intensity = Math.max(0, sunHeight * 1.5);
+
+            if (sunHeight > 0) {
+                // Day
+                scene.background.setHex(0x5da9e9);
+                scene.background.lerp(new THREE.Color(0x0f1712), 1 - sunHeight);
+                ambientLight.intensity = 0.4 + (sunHeight * 0.4);
+                // FIXED: Fog color is now separate from sky color to avoid "Blue Haze"
+                globalFog.color.setHex(0xabc6d6); // Neutral day grey-blue
+                globalFog.color.lerp(new THREE.Color(0x0f1712), 1 - sunHeight);
+            } else {
+                // Night
+                scene.background.setHex(0x050505);
+                ambientLight.intensity = 0.1;
+                globalFog.color.setHex(0x050505);
+            }
+
+            let targetDensity = 0.02;
+            if (time > 18 || time < 6) targetDensity = 0.05;
+            if (time > 5 && time < 8) targetDensity = 0.08;
+
+            globalFog.density += (targetDensity - globalFog.density) * 0.01;
+        }
+
+        function createRoundedPart(w, h, d, rad, color, x, y, z, rotX = 0, rotY = 0, rotZ = 0, matOverride = null) {
+            const geo = new RoundedBoxGeometry(w, h, d, 4, rad);
+            const mat = matOverride ? matOverride : new THREE.MeshStandardMaterial({ color: color, roughness: 0.9 });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, y, z);
+            mesh.rotation.set(rotX, rotY, rotZ);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createRealisticDeer(variant, gx, gy) {
+            const group = new THREE.Group();
+            const mainMat = new THREE.MeshStandardMaterial({ color: variant.color, roughness: 1 });
+            const antlerMat = new THREE.MeshStandardMaterial({ color: 0xDDDDDD, roughness: 1 });
+            const hoofMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+            const noseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 });
+
+            const s = variant.scale;
+            const m = variant.muscle;
+
+            group.add(createRoundedPart(1.4 * s, 1.4 * s * m, 1.8 * s, 0.4 * s, null, 0, 3 * s, 0.5 * s, -0.1, 0, 0, mainMat));
+            group.add(createRoundedPart(1.3 * s, 1.35 * s * m, 1.6 * s, 0.4 * s, null, 0, 3.1 * s, -0.8 * s, 0.1, 0, 0, mainMat));
+
+            const neckLen = 1.3 * s;
+            const nThick = variant.neckThick * s;
+            const neckGeo = new THREE.CylinderGeometry(nThick * 0.25, nThick * 0.6, neckLen, 16);
+            const neck = new THREE.Mesh(neckGeo, mainMat);
+            const neckAngle = Math.PI / 3.5;
+            const startY = 3.1 * s, startZ = 0.8 * s;
+            const neckY = startY + (Math.cos(neckAngle) * neckLen * 0.5);
+            const neckZ = startZ + (Math.sin(neckAngle) * neckLen * 0.5);
+            neck.position.set(0, neckY, neckZ);
+            neck.rotation.x = neckAngle;
+            neck.scale.set(1.25, 1, 0.8);
+            neck.castShadow = true; group.add(neck);
+
+            if (variant.mane) {
+                const maneGeo = new THREE.CylinderGeometry(nThick * 0.4, nThick * 0.8, neckLen * 0.8, 12);
+                const mane = new THREE.Mesh(maneGeo, mainMat);
+                mane.position.set(0, neckY, neckZ - 0.1 * s);
+                mane.rotation.x = neckAngle;
+                mane.scale.set(1.3, 1, 0.85);
+                group.add(mane);
+            }
+
+            const headY = neckY + (Math.cos(neckAngle) * neckLen * 0.5);
+            const headZ = neckZ + (Math.sin(neckAngle) * neckLen * 0.5);
+            const headGroup = new THREE.Group();
+            headGroup.position.set(0, headY, headZ + 0.1 * s);
+            headGroup.add(createRoundedPart(0.65 * s, 0.65 * s, 0.7 * s, 0.25 * s, null, 0, 0, 0, 0, 0, 0, mainMat));
+            headGroup.add(createRoundedPart(0.48 * s, 0.4 * s, 0.7 * s, 0.15 * s, null, 0, -0.15 * s, 0.6 * s, 0, 0, 0, mainMat));
+            headGroup.add(createRoundedPart(0.32 * s, 0.22 * s, 0.1 * s, 0.05 * s, null, 0, -0.15 * s, 1.0 * s, 0, 0, 0, noseMat));
+
+            if (variant.antlers !== 'none') {
+                const buildAntler = (side) => {
+                    const sideG = new THREE.Group();
+                    sideG.add(createRoundedPart(0.08 * s, 1.5 * s, 0.08 * s, 0.04 * s, null, side * 0.4 * s, 0.6 * s, -0.2 * s, -0.5, 0, side * -0.5, antlerMat));
+                    sideG.add(createRoundedPart(0.06 * s, 0.6 * s, 0.06 * s, 0.03 * s, null, side * 0.6 * s, 0.6 * s, 0.2 * s, 0.8, 0, side * 0.3, antlerMat));
+                    return sideG;
+                }
+                headGroup.add(buildAntler(1));
+                headGroup.add(buildAntler(-1));
+            }
+            group.add(headGroup);
+
+            const createLeg = (x, z, isBack) => {
+                const legG = new THREE.Group();
+                legG.position.set(x, 2.8 * s, z);
+                const thighH = 1.1 * s;
+                legG.add(createRoundedPart(0.55 * s * m, thighH, 0.55 * s * m, 0.2 * s, null, 0, -thighH / 2 + 0.2 * s, 0, isBack ? 0.2 : -0.1, 0, 0, mainMat));
+                const shinH = 1.0 * s;
+                const shinZ = isBack ? 0.2 * s : -0.05 * s;
+                legG.add(createRoundedPart(0.28 * s, shinH, 0.28 * s, 0.1 * s, null, 0, -thighH - shinH / 2 + 0.3 * s, shinZ, isBack ? 0.35 : -0.15, 0, 0, mainMat));
+                legG.add(createRoundedPart(0.22 * s, 0.2 * s, 0.25 * s, 0.05 * s, null, 0, -thighH - shinH + 0.1 * s, shinZ + (isBack ? -0.18 * s : 0.08 * s), 0, 0, 0, hoofMat));
+                return legG;
+            };
+            const fO = 0.8 * s, bO = -0.9 * s, wO = 0.45 * s;
+            group.add(createLeg(wO, fO, false));
+            group.add(createLeg(-wO, fO, false));
+            group.add(createLeg(wO, bO, true));
+            group.add(createLeg(-wO, bO, true));
+
+            const px = (gx - MAP_SIZE / 2) * TILE_SIZE;
+            const pz = (gy - MAP_SIZE / 2) * TILE_SIZE;
+            group.position.set(px, 0, pz);
+            group.rotation.y = Math.random() * Math.PI * 2;
+            scene.add(group);
+            return group;
+        }
+
+        function generate3DWorld() {
+            const matGrass = new THREE.MeshStandardMaterial({ color: 0x556B2F, roughness: 1.0 });
+            const matWater = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, metalness: 0.5, transparent: true, opacity: 0.9 });
+            const matRock = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.8 });
+
+            const groundGeoms = [];
+            const waterGeoms = [];
+            const rockGeoms = [];
+
+            for (let y = 0; y < MAP_SIZE; y++) {
+                map[y] = [];
+                for (let x = 0; x < MAP_SIZE; x++) {
+
+                    const isSafe = (x > 28 && x < 32 && y > 28 && y < 32);
+
+                    const nx = x * 0.1, ny = y * 0.1;
+                    let val = Math.sin(nx) * Math.cos(ny) + Math.sin(nx * 2 + ny * 3) * 0.5;
+
+                    let type = T_GRASS;
+                    if (!isSafe) {
+                        if (val > 0.4) type = T_FOREST;
+                        else if (val < -0.6) type = T_WATER;
+                        else if (val > 0.2 && val <= 0.4 && Math.random() < 0.3) type = T_ROCK;
+                    }
+
+                    map[y][x] = type;
+
+                    const px = (x - MAP_SIZE / 2) * TILE_SIZE;
+                    const pz = (y - MAP_SIZE / 2) * TILE_SIZE;
+
+                    if (type === T_WATER) {
+                        const w = new THREE.PlaneGeometry(TILE_SIZE, TILE_SIZE);
+                        w.rotateX(-Math.PI / 2); w.translate(px, -0.3, pz);
+                        waterGeoms.push(w);
+                    } else {
+                        const g = new THREE.PlaneGeometry(TILE_SIZE, TILE_SIZE);
+                        g.rotateX(-Math.PI / 2); g.translate(px, 0, pz);
+                        groundGeoms.push(g);
+
+                        if (type === T_ROCK) {
+                            const r = new RoundedBoxGeometry(Math.random() * 1.5 + 1, Math.random() * 1.5 + 1, Math.random() * 1.5 + 1, 2, 0.2);
+                            r.translate(px, 0.5, pz);
+                            rockGeoms.push(r);
+                        }
+                    }
+                }
+            }
+
+            if (groundGeoms.length) {
+                const m = new THREE.Mesh(mergeGeometries(groundGeoms), matGrass);
+                m.receiveShadow = true; scene.add(m);
+            }
+            if (waterGeoms.length) {
+                const m = new THREE.Mesh(mergeGeometries(waterGeoms), matWater);
+                scene.add(m);
+            }
+            if (rockGeoms.length) {
+                const m = new THREE.Mesh(mergeGeometries(rockGeoms), matRock);
+                m.castShadow = true; m.receiveShadow = true;
+                scene.add(m);
+            }
+
+            // --- NEW DETAILED PINE TREES ---
+            const trunkGeoms = [];
+            const leafGeoms = [];
+
+            for (let y = 0; y < MAP_SIZE; y++) {
+                for (let x = 0; x < MAP_SIZE; x++) {
+                    if (map[y][x] === T_FOREST) {
+                        const px = (x - MAP_SIZE / 2) * TILE_SIZE;
+                        const pz = (y - MAP_SIZE / 2) * TILE_SIZE;
+                        const offsetX = (Math.random() - 0.5) * 2;
+                        const offsetZ = (Math.random() - 0.5) * 2;
+                        const s = 0.8 + Math.random() * 0.8; // Scale
+
+                        // Trunk
+                        const trunk = new THREE.CylinderGeometry(0.2 * s, 0.4 * s, 1.5 * s, 5);
+                        trunk.translate(px + offsetX, 0.75 * s, pz + offsetZ);
+                        trunkGeoms.push(trunk);
+
+                        // Foliage - Stacked Cones for North American Pine Look
+                        const bottom = new THREE.ConeGeometry(2 * s, 2.5 * s, 7);
+                        bottom.translate(px + offsetX, 2.5 * s, pz + offsetZ);
+                        leafGeoms.push(bottom);
+
+                        const mid = new THREE.ConeGeometry(1.6 * s, 2 * s, 7);
+                        mid.translate(px + offsetX, 3.8 * s, pz + offsetZ);
+                        leafGeoms.push(mid);
+
+                        const top = new THREE.ConeGeometry(1.0 * s, 1.5 * s, 7);
+                        top.translate(px + offsetX, 5.0 * s, pz + offsetZ);
+                        leafGeoms.push(top);
+                    }
+                }
+            }
+
+            if (trunkGeoms.length > 0) {
+                const matWood = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 1 });
+                const meshTrunks = new THREE.Mesh(mergeGeometries(trunkGeoms), matWood);
+                meshTrunks.castShadow = true; meshTrunks.receiveShadow = true;
+                scene.add(meshTrunks);
+            }
+            if (leafGeoms.length > 0) {
+                const matLeaf = new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.8 });
+                const meshLeaves = new THREE.Mesh(mergeGeometries(leafGeoms), matLeaf);
+                meshLeaves.castShadow = true; meshLeaves.receiveShadow = true;
+                scene.add(meshLeaves);
+            }
+        }
+
+        function spawnCampQuest() {
+            const cx = (32 - MAP_SIZE / 2) * TILE_SIZE;
+            const cz = (32 - MAP_SIZE / 2) * TILE_SIZE;
+
+            camp = new THREE.Group();
+            camp.position.set(cx, 0, cz);
+
+            const tentGeo = new THREE.ConeGeometry(3, 5, 8);
+            const tentMat = new THREE.MeshStandardMaterial({ color: 0xd2b48c });
+            const tent = new THREE.Mesh(tentGeo, tentMat);
+            tent.position.y = 2.5;
+            camp.add(tent);
+
+            const stonesGeo = new THREE.DodecahedronGeometry(0.3);
+            const stonesMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
+            for (let i = 0; i < 8; i++) {
+                const stone = new THREE.Mesh(stonesGeo, stonesMat);
+                const a = (i / 8) * Math.PI * 2;
+                stone.position.set(Math.sin(a) * 1.2, 0.15, Math.cos(a) * 1.2 + 4);
+                camp.add(stone);
+            }
+
+            const cvs = document.createElement('canvas'); cvs.width = 64; cvs.height = 64;
+            const ctx = cvs.getContext('2d');
+            ctx.fillStyle = "#facc15"; ctx.beginPath(); ctx.arc(32, 32, 30, 0, Math.PI * 2); ctx.fill();
+            ctx.font = "40px Arial"; ctx.fillStyle = "black"; ctx.textAlign = "center"; ctx.fillText("!", 32, 45);
+            const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cvs) }));
+            sprite.position.set(0, 8, 0);
+            sprite.scale.set(3, 3, 1);
+            camp.add(sprite);
+
+            scene.add(camp);
+            camp.userData = { isCamp: true };
+            gameObjects.push({ type: 'camp', mesh: camp });
+        }
+
+        function spawnAnimals() {
+            for (let i = 0; i < 8; i++) {
+                let x, y;
+                do { x = Math.floor(Math.random() * (MAP_SIZE - 2)) + 1; y = Math.floor(Math.random() * (MAP_SIZE - 2)) + 1; }
+                while (map[y][x] !== T_GRASS);
+
+                const variant = DEER_VARIANTS[Math.floor(Math.random() * DEER_VARIANTS.length)];
+                const deer = createRealisticDeer(variant, x, y);
+                deers.push(deer);
+            }
+        }
+
+        function spawnDecorations() {
+            const woodGeo = new THREE.CylinderGeometry(0.1, 0.1, 1);
+            const woodMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+            const waterGeo = new THREE.DodecahedronGeometry(0.3);
+            const waterMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x004488 });
+
+            for (let i = 0; i < 30; i++) {
+                let type = Math.random() > 0.5 ? 'wood' : 'water';
+                let x, y;
+                do { x = Math.floor(Math.random() * (MAP_SIZE - 2)) + 1; y = Math.floor(Math.random() * (MAP_SIZE - 2)) + 1; }
+                while (map[y][x] !== T_GRASS);
+
+                const m = new THREE.Mesh(type === 'wood' ? woodGeo : waterGeo, type === 'wood' ? woodMat : waterMat);
+                m.position.set((x - MAP_SIZE / 2) * TILE_SIZE, 0.5, (y - MAP_SIZE / 2) * TILE_SIZE);
+                if (type === 'wood') { m.rotation.z = Math.PI / 2; m.rotation.y = Math.random(); }
+                scene.add(m);
+                gameObjects.push({ type, mesh: m });
+            }
+        }
+
+        function spawnFloatingText(text, color, pos) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.font = "Bold 40px Nunito";
+            ctx.fillStyle = color;
+            ctx.textAlign = "center";
+            ctx.shadowColor = "black"; ctx.shadowBlur = 4;
+            ctx.fillText(text, 128, 48);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+            const sprite = new THREE.Sprite(mat);
+            sprite.position.copy(pos);
+            sprite.position.y += 2.0;
+            sprite.scale.set(4, 1, 1);
+            scene.add(sprite);
+
+            floatingTexts.push({ sprite, life: 1.5 });
+        }
+
+        function createPlayerMarker() {
+            const geo = new THREE.ConeGeometry(4, 8, 8); geo.rotateX(-Math.PI / 2);
+            const mat = new THREE.MeshBasicMaterial({ color: 0xC04E38 });
+            player.marker = new THREE.Mesh(geo, mat); player.marker.layers.set(0);
+            scene.add(player.marker);
+            player.object = new THREE.Object3D();
+            updatePlayerPos();
+        }
+
+        function updatePlayerPos() {
+            const px = (player.x - MAP_SIZE / 2) * TILE_SIZE;
+            const pz = (player.y - MAP_SIZE / 2) * TILE_SIZE;
+            if (player.object) player.object.position.set(px, 0, pz);
+            fpvCamera.position.set(px, 1.7, pz);
+            fpvCamera.rotation.y = player.rot + Math.PI;
+
+            if (player.marker) {
+                player.marker.position.set(px, 10, pz);
+                player.marker.rotation.y = player.rot + Math.PI;
+                camera.position.x = px; camera.position.z = pz;
+            }
+        }
+
+        function setupControls() {
+            const bind = (sel, key) => {
+                const el = document.querySelector(sel);
+                const start = (e) => { e.preventDefault(); keys[key] = true; el.style.background = '#C04E38'; };
+                const end = (e) => { e.preventDefault(); keys[key] = false; el.style.background = 'rgba(66, 82, 36, 0.4)'; };
+                el.addEventListener('mousedown', start); el.addEventListener('mouseup', end);
+                el.addEventListener('touchstart', start); el.addEventListener('touchend', end);
+            };
+            bind('.ctrl-up', 'w'); bind('.ctrl-down', 's'); bind('.ctrl-left', 'a'); bind('.ctrl-right', 'd');
+        }
+
+        function onKeyDown(e) {
+            const k = e.key.toLowerCase();
+            if (k === 'w' || k === 'arrowup') keys.w = true;
+            if (k === 's' || k === 'arrowdown') keys.s = true;
+            if (k === 'a' || k === 'arrowleft') keys.a = true;
+            if (k === 'd' || k === 'arrowright') keys.d = true;
+        }
+        function onKeyUp(e) {
+            const k = e.key.toLowerCase();
+            if (k === 'w' || k === 'arrowup') keys.w = false;
+            if (k === 's' || k === 'arrowdown') keys.s = false;
+            if (k === 'a' || k === 'arrowleft') keys.a = false;
+            if (k === 'd' || k === 'arrowright') keys.d = false;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            gameTime += 0.005; // Slightly slower time for better pacing
+            updateDayNightCycle();
+
+            // Calculate Player World Position
+            const playerWorldX = (player.x - MAP_SIZE / 2) * TILE_SIZE;
+            const playerWorldZ = (player.y - MAP_SIZE / 2) * TILE_SIZE;
+
+            deers.forEach((group, i) => {
+                const dx = group.position.x - playerWorldX;
+                const dz = group.position.z - playerWorldZ;
+                const distSq = dx * dx + dz * dz;
+                const fleeRadius = 5 * TILE_SIZE;
+
+                if (distSq < fleeRadius * fleeRadius) {
+                    // RUN AWAY
+                    const dist = Math.sqrt(distSq);
+                    const vx = dx / dist;
+                    const vz = dz / dist;
+
+                    group.position.x += vx * 0.15;
+                    group.position.z += vz * 0.15;
+
+                    const targetRot = Math.atan2(vx, vz);
+                    let rotDiff = targetRot - group.rotation.y;
+                    while (rotDiff > Math.PI) rotDiff -= Math.PI * 2;
+                    while (rotDiff < -Math.PI) rotDiff += Math.PI * 2;
+                    group.rotation.y += rotDiff * 0.1;
+
+                    group.position.y = Math.abs(Math.sin(gameTime * 20)) * 0.3;
+
+                } else {
+                    // IDLE
+                    group.position.y = Math.sin(gameTime * 2 + i) * 0.02;
+                    group.rotation.y += Math.sin(gameTime + i) * 0.002;
+                }
+            });
+
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                const ft = floatingTexts[i];
+                ft.life -= 0.02;
+                ft.sprite.position.y += 0.02;
+                ft.sprite.material.opacity = ft.life;
+                if (ft.life <= 0) {
+                    scene.remove(ft.sprite);
+                    floatingTexts.splice(i, 1);
+                }
+            }
+
+            if (Math.floor(gameTime * 10) % 50 === 0) {
+                player.hungerVal = Math.min(100, player.hungerVal + 0.05);
+                updateUI();
+            }
+
+            let moving = false;
+            if (keys.a) { player.rot += 0.05; moving = true; }
+            if (keys.d) { player.rot -= 0.05; moving = true; }
+
+            const speed = keys.w ? 0.15 : (keys.s ? -0.1 : 0);
+            if (speed !== 0) {
+                moving = true;
+                const nx = player.x + Math.sin(player.rot) * speed;
+                const ny = player.y + Math.cos(player.rot) * speed;
+                const gx = Math.round(nx), gy = Math.round(ny);
+
+                if (map[gy] && map[gy][gx] !== T_WATER && map[gy][gx] !== T_ROCK) {
+                    player.x = nx; player.y = ny;
+                } else {
+                    if (keys.w) {
+                        if (!player.lastBlockTime || Date.now() - player.lastBlockTime > 1000) {
+                            spawnFloatingText("Path Blocked!", "#ef4444", player.object.position);
+                            player.lastBlockTime = Date.now();
+                        }
+                    }
+                }
+            }
+
+            if (moving) {
+                updatePlayerPos();
+                document.getElementById('turn-indicator').innerText = "MOVING";
+                checkCollisions();
+            } else {
+                document.getElementById('turn-indicator').innerText = "IDLE";
+            }
+
+            // RENDER LOOP
+            scene.fog = null;
+            renderer.render(scene, camera);
+
+            scene.fog = globalFog;
+            fpvRenderer.render(scene, fpvCamera);
+        }
+
+        function checkCollisions() {
+            const px = (player.x - MAP_SIZE / 2) * TILE_SIZE;
+            const pz = (player.y - MAP_SIZE / 2) * TILE_SIZE;
+            for (let i = gameObjects.length - 1; i >= 0; i--) {
+                const obj = gameObjects[i];
+                const dx = px - obj.mesh.position.x;
+                const dz = pz - obj.mesh.position.z;
+                if (dx * dx + dz * dz < 4) {
+                    if (obj.type === 'camp') {
+                        document.getElementById('quest-modal').classList.remove('hidden');
+                        gameObjects.splice(i, 1);
+                        continue;
+                    }
+
+                    scene.remove(obj.mesh);
+                    gameObjects.splice(i, 1);
+                    if (obj.type === 'wood') { player.wood++; log("Found Wood (+1)", true); }
+                    if (obj.type === 'water') { player.water++; log("Found Water (+1)", true); }
+
+                    if (questActive && obj.type === 'wood') {
+                        document.getElementById('quest-progress').innerText = `Wood Needed: ${player.wood} / 3`;
+                        if (player.wood >= 3) {
+                            log("Quest Complete! You built a shelter.", true);
+                        }
+                    }
+
+                    updateUI();
+                }
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('res-wood').innerText = `🪵 ${player.wood}`;
+            document.getElementById('res-food').innerText = `🌽 ${player.corn}`;
+            document.getElementById('res-water').innerText = `💧 ${player.water}`;
+
+            let hText = "Full";
+            let hColor = "#4ade80";
+            if (player.hungerVal > 20) { hText = "Good"; hColor = "#a3e635"; }
+            if (player.hungerVal > 50) { hText = "Hungry"; hColor = "#facc15"; }
+            if (player.hungerVal > 75) { hText = "Very Hungry"; hColor = "#fb923c"; }
+            if (player.hungerVal > 90) { hText = "Starving"; hColor = "#ef4444"; }
+
+            const el = document.getElementById('stat-hunger');
+            el.innerText = hText;
+            el.style.color = hColor;
+        }
+
+        function onResize() {
+            const w = document.getElementById('mapview-container').clientWidth;
+            const h = document.getElementById('mapview-container').clientHeight;
+            renderer.setSize(w, h);
+            const w2 = window.innerWidth, h2 = window.innerHeight;
+            fpvCamera.aspect = w2 / h2; fpvCamera.updateProjectionMatrix();
+            fpvRenderer.setSize(w2, h2);
+        }
+
+        function log(msg, highlight) {
+            const div = document.createElement('p');
+            div.textContent = `> ${msg}`;
+            if (highlight) div.className = 'log-new';
+            const el = document.getElementById('event-log');
+            el.appendChild(div);
+            el.scrollTop = el.scrollHeight;
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>
