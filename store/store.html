@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store — Sacred Ones</title>
+    <meta name="description" content="Sacred Ones merchandise: hats, tees, hoodies, kids wear, socks, blankets and accessories. Choose an item, size and color, then send us a request.">
+    <meta name="theme-color" content="#1e1915">
+    <link rel="icon" href="../assets/logo-emblem-small.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="m3.css">
+    <style>
+        .wrap { width: min(1200px, 100% - 40px); margin-inline: auto; }
+        .skip { position: absolute; left: 12px; top: -80px; z-index: 500; background: var(--md-primary); color: var(--md-on-primary); padding: 12px 20px; border-radius: var(--md-shape-full); }
+        .skip:focus { top: 12px; }
+        .intro { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 64px); align-items: center; padding: clamp(32px, 5vw, 64px) 0 clamp(28px, 4vw, 48px); }
+        .intro h1 { margin: 6px 0 14px; }
+        .intro p { max-width: 46ch; }
+        .steps { display: grid; gap: 6px; margin-top: 24px; counter-reset: s; }
+        .steps li { display: flex; align-items: center; gap: 14px; min-height: 40px; counter-increment: s; }
+        .steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); font: 600 .875rem/1 var(--md-font-plain); flex: none; }
+        .banner { margin: 0; border-radius: var(--md-shape-xl); overflow: hidden; box-shadow: var(--md-elev-3); background: var(--md-surface-container); }
+        .banner img { width: 100%; height: auto; }
+        .filters { position: sticky; top: 64px; z-index: 80; background: var(--md-surface); padding: 12px 0; border-bottom: 1px solid var(--md-outline-variant); }
+        .filters .md-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+        .filters .md-chips::-webkit-scrollbar { display: none; }
+        .filters .md-chip { flex: none; }
+        .count { margin: 24px 0 16px; color: var(--md-on-surface-variant); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; padding-bottom: 80px; }
+        .item { display: flex; flex-direction: column; width: 100%; padding: 0; border: 0; text-align: left; overflow: hidden; border-radius: var(--md-shape-md); background: var(--md-surface-container-low); box-shadow: var(--md-elev-1); cursor: pointer; color: var(--md-on-surface); font: inherit; transition: box-shadow var(--md-dur-medium) var(--md-ease-standard), transform var(--md-dur-medium) var(--md-ease-decel); }
+        .item:hover { box-shadow: var(--md-elev-3); transform: translateY(-2px); }
+        .item .thumb { aspect-ratio: 1; background: var(--md-surface-container-lowest); display: block; overflow: hidden; }
+        .item .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--md-dur-long) var(--md-ease-decel); }
+        .item:hover .thumb img { transform: scale(1.04); }
+        .item .meta { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; }
+        .item .cat { font: 600 .75rem/1.2 var(--md-font-plain); letter-spacing: .08em; text-transform: uppercase; color: var(--md-tertiary); }
+        .item .name { font: 600 1rem/1.35 var(--md-font-plain); }
+        .item .cta { color: var(--md-primary); font: 600 .875rem/1 var(--md-font-plain); margin-top: 8px; }
+        .empty { padding: 48px 0; text-align: center; color: var(--md-on-surface-variant); }
+        .foot-in { padding: 40px 0 48px; display: grid; gap: 4px; }
+        .foot a { color: var(--md-tertiary); }
+
+        /* dialog */
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .modal-img { background: var(--md-surface-container-lowest); display: grid; place-items: center; }
+        .modal-img img { width: 100%; height: 100%; object-fit: cover; max-height: 640px; }
+        .modal-body { padding: 24px 24px 20px; position: relative; display: grid; gap: 18px; align-content: start; }
+        .modal-body .close { position: absolute; top: 8px; right: 8px; }
+        .modal-body h3 { margin-right: 44px; }
+        fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+        legend { padding: 0; margin-bottom: 10px; font: 600 .875rem/1.3 var(--md-font-plain); color: var(--md-on-surface-variant); }
+        legend .chosen { color: var(--md-primary); margin-left: 6px; }
+        .opt { position: relative; display: inline-flex; }
+        .opt input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+        .opt > span { pointer-events: none; }
+        .opt input:focus-visible + .md-chip { outline: 3px solid var(--md-tertiary); outline-offset: 2px; }
+        .opt input:checked + .md-chip { background: var(--md-secondary-container); color: var(--md-on-secondary-container); border-color: transparent; }
+        .opt input:checked + .md-chip svg.tick { display: inline-block; }
+        .md-chip svg.tick { display: none; }
+        .opt.col .md-chip .dot { width: 20px; height: 20px; }
+        .stepper { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--md-outline); border-radius: var(--md-shape-full); padding: 2px; }
+        .stepper output { min-width: 40px; text-align: center; font: 600 1.0625rem/1 var(--md-font-plain); }
+        .error { color: var(--md-error); min-height: 1.2em; font-weight: 600; }
+        .summary { border-radius: var(--md-shape-sm); background: var(--md-surface-container-highest); padding: 8px 4px; }
+        .summary div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 16px; }
+        .summary dt { color: var(--md-on-surface-variant); }
+        .summary dd { font-weight: 600; text-align: right; }
+        .img-link { display: block; position: relative; border-radius: var(--md-shape-md); overflow: hidden; }
+        .img-link img { width: 100%; max-height: 220px; object-fit: cover; }
+        .img-link .badge { position: absolute; left: 12px; bottom: 12px; padding: 8px 14px; border-radius: var(--md-shape-full); background: var(--md-inverse-surface); color: var(--md-inverse-on-surface); font: 600 .8125rem/1 var(--md-font-plain); }
+        [hidden] { display: none !important; }
+        @media (max-width: 900px) { .intro { grid-template-columns: 1fr; } .banner { order: -1; } }
+        @media (max-width: 760px) { .modal-grid { grid-template-columns: 1fr; } .modal-img img { max-height: 240px; } }
+        @media (max-width: 700px) { .wrap { width: min(1200px, 100% - 32px); } .brand-long { display: none; } }
+    </style>
+</head>
+
+<body>
+    <a class="skip" href="#shop">Skip to the shop</a>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" /></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" /></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></symbol>
+        <symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></symbol>
+        <symbol id="i-remove" viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z" /></symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></symbol>
+    </svg>
+
+    <header class="md-app-bar scheme-dark" id="app-bar">
+        <div class="bar-in">
+            <a class="md-icon-btn md-state" id="home-link" href="../index.html" aria-label="Back to the Sacred Ones website"><svg aria-hidden="true"><use href="#i-back" /></svg></a>
+            <a class="md-brand md-state" id="brand-link" href="../index.html"><img src="../assets/logo-emblem-small.jpg" alt="" width="36" height="36"> <span class="brand-long">Sacred Ones </span>Store</a>
+            <a class="md-btn tonal has-icon md-state" style="margin-left:auto" id="bar-mail" href="#"><svg aria-hidden="true"><use href="#i-mail" /></svg>Contact</a>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <section class="intro" aria-labelledby="store-title">
+            <div>
+                <span class="md-eyebrow">The store</span>
+                <h1 class="md-display-medium" id="store-title">Wear the movement</h1>
+                <p class="md-body-large md-on-variant">Every piece carries our message: Our People. Our Land. Our Culture. Our Future. Choose an item, pick your size and color, and send us a request. We reply with pricing and availability.</p>
+                <ol class="steps">
+                    <li>Tap an item</li>
+                    <li>Choose size, color and quantity</li>
+                    <li>Press OK, then Contact Us to email your request</li>
+                </ol>
+            </div>
+            <figure class="banner">
+                <img src="images/banner.jpg" alt="Sacred Ones merchandise: hats, hoodies, t-shirts, kids shirts, sweat outfits, socks, blankets, towels and accessories featuring the eagle, buffalo and sunrise logo. More than clothing, a movement.">
+            </figure>
+        </section>
+
+        <nav class="filters" aria-label="Store categories"><div class="md-chips" id="filter-chips" role="group"></div></nav>
+        <p class="count md-body-medium" id="count" aria-live="polite"></p>
+        <main id="shop"><div class="grid" id="grid"></div></main>
+    </div>
+
+    <footer class="foot scheme-dark">
+        <div class="md-bead" aria-hidden="true"></div>
+        <div class="wrap foot-in">
+            <p class="md-title-medium">Questions about an order?</p>
+            <p><a id="foot-mail" href="#"></a></p>
+            <p class="md-body-small md-on-variant">Sacred Ones · 2112 4th Avenue W, Suite 103B, Williston, ND 58001 · A Brighter Tomorrow Together</p>
+        </div>
+    </footer>
+
+    <dialog class="md-dialog" id="item-dialog" aria-labelledby="m-title">
+        <div class="modal-grid">
+            <div class="modal-img"><img id="m-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt=""></div>
+            <div class="modal-body">
+                <button class="md-icon-btn md-state close" id="m-close" type="button" aria-label="Close"><svg aria-hidden="true"><use href="#i-close" /></svg></button>
+
+                <div id="step-options" style="display:grid;gap:18px">
+                    <div>
+                        <span class="md-eyebrow" id="m-cat" style="margin-bottom:6px"></span>
+                        <h3 class="md-headline-medium" id="m-title"></h3>
+                        <p class="md-body-medium md-on-variant" id="m-desc" style="margin-top:8px"></p>
+                    </div>
+                    <fieldset id="size-set"><legend>Size <span class="chosen" id="size-chosen"></span></legend><div class="md-chips" id="size-chips"></div></fieldset>
+                    <fieldset id="color-set"><legend>Color <span class="chosen" id="color-chosen"></span></legend><div class="md-chips" id="color-chips"></div></fieldset>
+                    <fieldset>
+                        <legend id="qty-label">Quantity</legend>
+                        <div class="stepper" role="group" aria-labelledby="qty-label">
+                            <button class="md-icon-btn md-state" id="q-minus" type="button" aria-label="Decrease quantity"><svg aria-hidden="true"><use href="#i-remove" /></svg></button>
+                            <output id="qty" aria-live="polite">1</output>
+                            <button class="md-icon-btn md-state" id="q-plus" type="button" aria-label="Increase quantity"><svg aria-hidden="true"><use href="#i-add" /></svg></button>
+                        </div>
+                    </fieldset>
+                    <p class="error" id="m-error" role="alert"></p>
+                    <div><button class="md-btn filled block md-state" id="m-ok" type="button">OK</button></div>
+                    <p class="md-body-small md-on-variant">Contact us for pricing and availability.</p>
+                </div>
+
+                <div id="step-contact" hidden style="display:grid;gap:16px">
+                    <div>
+                        <span class="md-eyebrow" style="margin-bottom:6px">Almost done</span>
+                        <h3 class="md-headline-medium" id="c-title">Send us your request</h3>
+                    </div>
+                    <dl class="summary" id="c-summary"></dl>
+                    <a class="img-link" id="c-imglink" href="#" aria-label="Email Sacred Ones about this item">
+                        <img id="c-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+                        <span class="badge">Tap the image or button to email us</span>
+                    </a>
+                    <div class="md-dialog-actions" style="padding-top:0;justify-content:flex-start">
+                        <a class="md-btn filled has-icon md-state" id="c-mail" href="#"><svg aria-hidden="true"><use href="#i-mail" /></svg>Contact Us</a>
+                        <button class="md-btn text md-state" id="c-back" type="button">Change options</button>
+                    </div>
+                    <p class="md-body-small md-on-variant">If your email app does not open, write to <strong id="c-addr"></strong> and mention the item above.</p>
+                    <div><button class="md-btn outlined has-icon md-state" id="c-copy" type="button" style="min-height:40px"><svg aria-hidden="true"><use href="#i-copy" /></svg>Copy request</button></div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="m3.js"></script>
+    <script>
+        // ============ SETTINGS ============
+        const CONTACT_EMAIL = 'sacredones22@gmail.com';
+        const HOME_URL = '../index.html'; // the main site lives one folder up
+        document.getElementById('home-link').href = HOME_URL;
+        document.getElementById('brand-link').href = HOME_URL;
+
+        const SIZES = {
+            adult: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
+            kids: ['2T', '3T', '4T', 'Youth S', 'Youth M', 'Youth L'],
+            one: ['One Size'],
+            socks: ['S/M', 'L/XL'],
+        };
+
+        const C = {
+            black: { name: 'Black', hex: '#141414' },
+            charcoal: { name: 'Charcoal', hex: '#3a3a3c' },
+            grey: { name: 'Heather Grey', hex: '#9a9a9d' },
+            cream: { name: 'Sand', hex: '#e8dfcf' },
+            navy: { name: 'Navy', hex: '#1c2f4f' },
+            camo: { name: 'Camo', hex: '#5d6b45' },
+            tan: { name: 'Tan', hex: '#b99a6a' },
+            white: { name: 'White', hex: '#ffffff' },
+            pink: { name: 'Pink', hex: '#f2a6c1' },
+            blue: { name: 'Light Blue', hex: '#a9c8ef' },
+            brown: { name: 'Brown', hex: '#6b4423' },
+        };
+
+        // ============ PRODUCTS (edit here) ============
+        const PRODUCTS = [
+            // Hats
+            { id: 'hat-logo-black', cat: 'Hats', name: 'Eagle Logo Trucker Hat', img: 'items/hat-logo-black.jpg', sizes: 'one', colors: ['black', 'charcoal'], desc: 'Mesh-back trucker with the full Sacred Ones emblem.' },
+            { id: 'hat-leather-patch', cat: 'Hats', name: 'Leather Patch Trucker Hat', img: 'items/hat-leather-patch.jpg', sizes: 'one', colors: ['tan', 'black'], desc: 'Tan trucker with an eagle-and-pines leather patch.' },
+            { id: 'hat-camo-feather', cat: 'Hats', name: 'Camo Feather Hat', img: 'items/hat-camo-feather.jpg', sizes: 'one', colors: ['camo', 'black'], desc: 'Camo cap with embroidered feathers.' },
+            { id: 'hat-mountain-trucker', cat: 'Hats', name: 'Mountain & Feather Hat', img: 'items/hat-mountain-trucker.jpg', sizes: 'one', colors: ['black', 'charcoal'], desc: 'Black trucker with the mountain and feather mark.' },
+            { id: 'hat-grey-patch', cat: 'Hats', name: 'Grey Emblem Patch Hat', img: 'items/hat-grey-patch.jpg', sizes: 'one', colors: ['grey', 'black'], desc: 'Heather grey cap with the woven emblem patch.' },
+
+            // T-shirts
+            { id: 'tee-logo-black', cat: 'T-Shirts', name: 'Emblem Tee', img: 'items/tee-logo-black.jpg', sizes: 'adult', colors: ['black', 'white'], desc: 'Full-color emblem with Heal · Educate · Protect · Empower.' },
+            { id: 'tee-tipi-cream', cat: 'T-Shirts', name: 'Tipi & Pines Tee', img: 'items/tee-tipi-cream.jpg', sizes: 'adult', colors: ['cream', 'grey'], desc: 'Our People, Our Land, Our Culture, Our Future.' },
+            { id: 'tee-eagle-blue', cat: 'T-Shirts', name: 'Eagle Sunrise Tee', img: 'items/tee-eagle-blue.jpg', sizes: 'adult', colors: ['navy', 'black'], desc: 'Eagle over the lake at sunrise.' },
+            { id: 'tee-feather-black', cat: 'T-Shirts', name: 'Feather Tee', img: 'items/tee-feather-black.jpg', sizes: 'adult', colors: ['black', 'charcoal'], desc: 'A single feather with our four promises.' },
+
+            // Kids
+            { id: 'kids-pink', cat: 'Kids', name: 'Kids Emblem Tee', img: 'items/kids-pink.jpg', sizes: 'kids', colors: ['pink', 'blue', 'black'], desc: 'The Sacred Ones emblem in kid sizes.' },
+            { id: 'kids-future-matters', cat: 'Kids', name: 'Our Future Matters Tee', img: 'items/kids-future-matters.jpg', sizes: 'kids', colors: ['black', 'navy'], desc: 'Feathers and a message for our youth.' },
+            { id: 'kids-little-sacred', cat: 'Kids', name: 'Little Sacred Ones Tee', img: 'items/kids-little-sacred.jpg', sizes: 'kids', colors: ['blue', 'pink'], desc: 'Strong Roots, Brighter Tomorrows.' },
+
+            // Hoodies & sweats
+            { id: 'hoodie-logo-black', cat: 'Hoodies & Sweats', name: 'Emblem Hoodie', img: 'items/hoodie-logo-black.jpg', sizes: 'adult', colors: ['black', 'charcoal'], desc: 'Emblem on the chest with beaded pattern on the sleeves.' },
+            { id: 'hoodie-back-print', cat: 'Hoodies & Sweats', name: 'Back Print Hoodie', img: 'items/hoodie-back-print.jpg', sizes: 'adult', colors: ['black', 'charcoal'], desc: 'Large emblem on the back with our four promises.' },
+            { id: 'hoodie-feather-sleeve', cat: 'Hoodies & Sweats', name: 'Feather Sleeve Hoodie', img: 'items/hoodie-feather-sleeve.jpg', sizes: 'adult', colors: ['black', 'grey'], desc: 'Mountain mark on the chest, feather on the sleeve.' },
+            { id: 'hoodie-grey-set', cat: 'Hoodies & Sweats', name: 'Grey Mountain Sweat Set', img: 'items/hoodie-grey-set.jpg', sizes: 'adult', colors: ['grey', 'black'], desc: 'Hoodie and matching sweatpants.' },
+            { id: 'sweatpants-black', cat: 'Hoodies & Sweats', name: 'Feather Sweatpants', img: 'items/sweatpants-black.jpg', sizes: 'adult', colors: ['black', 'grey'], desc: 'Joggers with a feather on the leg.' },
+            { id: 'hoodie-black-text', cat: 'Hoodies & Sweats', name: 'Our People Hoodie', img: 'items/hoodie-black-text.jpg', sizes: 'adult', colors: ['black', 'charcoal'], desc: 'Our People, Our Land, Our Culture, Our Future on the back.' },
+
+            // Socks
+            { id: 'socks-pattern', cat: 'Socks', name: 'Beaded Pattern Socks', img: 'items/socks-pattern.jpg', sizes: 'socks', colors: ['black', 'grey'], desc: 'Beadwork-inspired patterns and feathers.' },
+            { id: 'socks-mountain', cat: 'Socks', name: 'Mountain Crew Socks', img: 'items/socks-mountain.jpg', sizes: 'socks', colors: ['white', 'black'], desc: 'Crew socks with the mountain and Sacred Ones mark.' },
+
+            // Home
+            { id: 'blanket-eagle', cat: 'Blankets & Towels', name: 'Eagle Lake Blanket', img: 'items/blanket-eagle.jpg', sizes: 'one', colors: ['navy'], desc: 'Soft throw blanket with the eagle, buffalo and sunrise.' },
+            { id: 'towel-logo', cat: 'Blankets & Towels', name: 'Emblem Towel', img: 'items/towel-logo.jpg', sizes: 'one', colors: ['white'], desc: 'Emblem towel with pine-forest border.' },
+
+            // Accessories
+            { id: 'tumbler', cat: 'Accessories', name: 'Emblem Tumbler', img: 'items/tumbler.jpg', sizes: 'one', colors: ['black'], desc: 'Insulated tumbler with the full emblem.' },
+            { id: 'bottle-feather', cat: 'Accessories', name: 'Feather Water Bottle', img: 'items/bottle-feather.jpg', sizes: 'one', colors: ['black'], desc: 'Wide-grip bottle with feather art.' },
+            { id: 'bottle-small', cat: 'Accessories', name: 'Sacred Ones Bottle', img: 'items/bottle-small.jpg', sizes: 'one', colors: ['black'], desc: 'Slim bottle with feather and name.' },
+            { id: 'mug', cat: 'Accessories', name: 'Emblem Mug', img: 'items/mug.jpg', sizes: 'one', colors: ['black'], desc: 'Black mug with the emblem.' },
+            { id: 'keychain', cat: 'Accessories', name: 'Medallion Keychain', img: 'items/keychain.jpg', sizes: 'one', colors: ['black'], desc: 'Metal medallion keychain.' },
+            { id: 'beanie', cat: 'Accessories', name: 'Leather Patch Beanie', img: 'items/beanie.jpg', sizes: 'one', colors: ['black', 'charcoal'], desc: 'Warm knit beanie with leather patch.' },
+            { id: 'sign-stronger', cat: 'Accessories', name: '"Stronger Together" Wood Sign', img: 'items/sign-stronger.jpg', sizes: 'one', colors: ['brown'], desc: 'Hand-lettered wooden sign.' },
+        ];
+        const $ = id => document.getElementById(id);
+        md.bindAppBar($('app-bar'));
+        const mailHref = 'mailto:' + CONTACT_EMAIL;
+        $('bar-mail').href = mailHref; $('foot-mail').href = mailHref; $('foot-mail').textContent = CONTACT_EMAIL;
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const TICK = '<svg class="tick" aria-hidden="true"><use href="#i-check" /></svg>';
+
+        // ============ FILTERS + GRID ============
+        const cats = ['All', ...new Set(PRODUCTS.map(p => p.cat))];
+        let active = 'All';
+        const fc = $('filter-chips');
+        fc.innerHTML = cats.map(c => `<button type="button" class="md-chip md-state" aria-pressed="${c === 'All'}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+        fc.addEventListener('click', e => {
+            const b = e.target.closest('[data-cat]'); if (!b) return;
+            active = b.dataset.cat;
+            fc.querySelectorAll('[data-cat]').forEach(x => x.setAttribute('aria-pressed', x === b));
+            render();
+        });
+        function render() {
+            const list = PRODUCTS.filter(p => active === 'All' || p.cat === active);
+            $('count').textContent = list.length + (list.length === 1 ? ' item' : ' items') + (active === 'All' ? '' : ' in ' + active);
+            const grid = $('grid'); grid.innerHTML = '';
+            list.forEach(p => {
+                const b = document.createElement('button');
+                b.type = 'button'; b.className = 'item md-state'; b.dataset.id = p.id;
+                b.innerHTML = `<span class="thumb"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"></span><span class="meta"><span class="cat">${esc(p.cat)}</span><span class="name">${esc(p.name)}</span><span class="cta">View options</span></span>`;
+                b.addEventListener('click', () => openItem(p, b));
+                grid.appendChild(b);
+            });
+        }
+        render();
+
+        // ============ DIALOG ============
+        const dlg = $('item-dialog');
+        let current = null, opener = null, qty = 1;
+        const setQty = n => { qty = Math.min(20, Math.max(1, n)); $('qty').textContent = qty; };
+        $('q-minus').addEventListener('click', () => setQty(qty - 1));
+        $('q-plus').addEventListener('click', () => setQty(qty + 1));
+
+        function opt(kind, name, value, inner, checked) {
+            return `<label class="opt ${kind === 'color' ? 'col' : ''}"><input type="radio" name="${name}" value="${esc(value)}" ${checked ? 'checked' : ''}><span class="md-chip">${inner}</span></label>`;
+        }
+        function show(step) { $('step-options').hidden = step !== 'options'; $('step-contact').hidden = step !== 'contact'; }
+
+        function openItem(p, trigger) {
+            current = p; opener = trigger; setQty(1);
+            $('m-img').src = p.img; $('m-img').alt = p.name;
+            $('m-cat').textContent = p.cat;
+            $('m-title').textContent = p.name;
+            $('m-desc').textContent = p.desc;
+            $('m-error').textContent = '';
+            show('options');
+            const sizes = SIZES[p.sizes];
+            $('size-chips').innerHTML = sizes.map(s => opt('size', 'size', s, TICK + esc(s), sizes.length === 1)).join('');
+            $('size-chosen').textContent = sizes.length === 1 ? sizes[0] : '';
+            $('color-chips').innerHTML = p.colors.map((k, i) => opt('color', 'color', C[k].name, `<span class="dot" style="background:${C[k].hex}"></span>${esc(C[k].name)}`, i === 0)).join('');
+            $('color-chosen').textContent = C[p.colors[0]].name;
+            dlg.showModal(); dlg.scrollTop = 0;
+        }
+        const val = name => { const el = dlg.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+        dlg.addEventListener('change', e => {
+            if (e.target.name === 'size') { $('size-chosen').textContent = e.target.value; $('m-error').textContent = ''; }
+            if (e.target.name === 'color') $('color-chosen').textContent = e.target.value;
+        });
+
+        $('m-ok').addEventListener('click', () => {
+            const size = val('size');
+            if (!size) { $('m-error').textContent = 'Choose a size to continue.'; return; }
+            const color = val('color');
+            const imgUrl = new URL(current.img, document.baseURI).href;
+            const lines = [
+                'Hello Sacred Ones,', '', 'I would like to request this item:', '',
+                'Item: ' + current.name, 'Category: ' + current.cat, 'Size: ' + size, 'Color: ' + color, 'Quantity: ' + qty, 'Photo: ' + imgUrl,
+                '', 'Please let me know pricing and availability.', '',
+                'My name:', 'My phone (optional):', 'Shipping city/state or pickup:',
+            ];
+            const body = lines.join('\r\n');
+            const subject = `Store request: ${current.name} (${size}, ${color})`;
+            const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            $('c-summary').innerHTML = [['Item', current.name], ['Size', size], ['Color', color], ['Quantity', qty]].map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
+            $('c-img').src = current.img; $('c-img').alt = current.name + ' — tap to email us about this item';
+            $('c-imglink').href = href; $('c-mail').href = href;
+            $('c-addr').textContent = CONTACT_EMAIL;
+            $('c-copy').dataset.text = `To: ${CONTACT_EMAIL}\r\nSubject: ${subject}\r\n\r\n${body}`;
+            show('contact'); $('c-mail').focus();
+        });
+        $('c-back').addEventListener('click', () => { show('options'); $('m-ok').focus(); });
+        $('c-copy').addEventListener('click', async () => {
+            const t = $('c-copy').dataset.text;
+            try { await navigator.clipboard.writeText(t); md.snackbar('Request copied. Paste it into an email to ' + CONTACT_EMAIL + '.'); }
+            catch (e) { window.prompt('Copy this request:', t); }
+        });
+        $('m-close').addEventListener('click', () => md.closeDialog(dlg));
+        dlg.addEventListener('close', () => { if (opener) opener.focus(); });
+    </script>
+</body>
+
+</html>

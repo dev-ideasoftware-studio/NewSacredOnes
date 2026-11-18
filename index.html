@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacred Ones — Give Them a Chance to Dream Again</title>
+    <meta name="description" content="Sacred Ones is an Oceti Sakowin nonprofit on the Fort Peck Reservation building youth technology jobs, a healing ancestral park, and the return of the bison. Play the game, read the archive, and donate.">
+    <meta property="og:title" content="Sacred Ones — A Brighter Tomorrow Together">
+    <meta property="og:description" content="Heal. Educate. Protect. Empower. Support the youth technology center, ancestral park and bison return on the Fort Peck Reservation.">
+    <meta property="og:image" content="https://sacredones.org/wp-content/uploads/2025/05/1000002596-scaled.jpg">
+    <meta name="theme-color" content="#1e1915">
+    <link rel="icon" href="assets/logo-emblem-small.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="m3.css">
+    <style>
+        /* ---------- layout primitives ---------- */
+        .wrap { width: min(1280px, 100% - 40px); margin-inline: auto; }
+        .skip { position: absolute; left: 12px; top: -80px; z-index: 500; background: var(--md-primary); color: var(--md-on-primary); padding: 12px 20px; border-radius: var(--md-shape-full); }
+        .skip:focus { top: 12px; }
+        .view { display: none; }
+        .view.active { display: block; }
+        .section { padding: clamp(36px, 4.5vw, 64px) 0; background: var(--md-surface); color: var(--md-on-surface); }
+        .section.tone-low { background: var(--md-surface-container-low); }
+        .section-head { max-width: 60ch; margin-bottom: 20px; }
+        .section-head p { margin-top: 14px; color: var(--md-on-surface-variant); }
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
+        .stack > * + * { margin-top: 18px; }
+        .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+        .btn-row .md-btn { white-space: normal; text-align: center; padding-block: 12px; line-height: 1.25; }
+        .wheel { width: 40px; height: 40px; flex: none; }
+        .photo { margin: 0; overflow: hidden; background: var(--md-surface-container-high); }
+        .photo img { width: 100%; height: 100%; object-fit: cover; }
+        .photo.lg { border-radius: var(--md-shape-lg); }
+        .photo.arch { border-radius: 220px 220px var(--md-shape-lg) var(--md-shape-lg); aspect-ratio: 4/5; max-width: 440px; width: 100%; justify-self: center; }
+        .photo figcaption, .cap-line { margin-top: 10px; font: 400 .8125rem/1.5 var(--md-font-plain); color: var(--md-on-surface-variant); letter-spacing: .02em; }
+        .quote { font: 400 clamp(1.3rem, 2.3vw, 1.65rem)/1.45 var(--md-font-brand); color: var(--md-on-surface); }
+        .quote.accent { padding-left: 20px; border-left: 3px solid var(--md-tertiary); }
+
+        /* ---------- hero: banner over the autoplaying video ---------- */
+        .hero { position: relative; overflow: hidden; isolation: isolate; color: #f6f1e7; padding: clamp(28px, 4vw, 48px) 0 clamp(32px, 4vw, 56px); background: #2b3a36; }
+        .hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+        .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(112deg, rgba(31, 47, 42, .9) 0%, rgba(38, 56, 50, .8) 34%, rgba(55, 76, 69, .5) 56%, rgba(72, 92, 84, .4) 74%, rgba(36, 50, 46, .72) 100%); }
+        .hero-in { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 48px); align-items: center; }
+        .hero-copy { max-width: 34rem; }
+        .hero-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+        .hero-brand img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: var(--md-elev-2); -webkit-mask-image: radial-gradient(circle, #000 69%, transparent 70.5%); mask-image: radial-gradient(circle, #000 69%, transparent 70.5%); }
+        .hero-brand span { font: 600 .8125rem/1.4 var(--md-font-plain); letter-spacing: .12em; text-transform: uppercase; color: #dcd3c2; }
+        .hero h1 { color: #faf6ee; text-shadow: 0 2px 18px rgba(0, 0, 0, .28); }
+        .hero .lede { margin-top: 22px; max-width: 42ch; color: #ebe4d6; font-size: 1.125rem; text-shadow: 0 1px 10px rgba(0, 0, 0, .3); }
+        .hero .btn-row .md-btn.outlined { color: #faf6ee; border-color: rgba(250, 246, 238, .7); }
+        .hero-banner { margin: 0; position: relative; border-radius: var(--md-shape-xl); overflow: hidden; box-shadow: var(--md-elev-5); background: #fff; outline: 1px solid rgba(255, 255, 255, .22); }
+        .hero-banner img { width: 100%; height: auto; }
+
+        /* ---------- website + game, two columns ---------- */
+
+        .event-strip { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; margin-top: 20px; padding: 8px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); text-decoration: none; color: inherit; }
+        .event-strip img { width: 100%; height: 150px; object-fit: cover; border-radius: var(--md-shape-sm); }
+        .event-strip .event-cap { grid-column: 1 / -1; padding: 4px 8px 2px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+        .event-strip .event-cap b { font-weight: 700; }
+        .event-strip .event-cap span { color: var(--md-primary); font-weight: 600; font-size: .9rem; }
+
+        .seven { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+        .seven-text p + p { margin-top: 14px; }
+        .section-head.row { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; max-width: none; flex-wrap: wrap; }
+        .section-head.row > div { max-width: 62ch; }
+        .proj-cards.four { grid-template-columns: repeat(4, 1fr); }
+        .proj-card[href] { text-decoration: none; color: inherit; }
+        .lc-photos { display: grid; grid-template-columns: 1.2fr .8fr; grid-template-rows: 200px 220px; gap: 10px; }
+        .lc-photos img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--md-shape-md); }
+        .lc-photos img:first-child { grid-column: 1 / -1; }
+        .chapters { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+        .chap { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 14px; align-items: baseline; padding: 16px 18px; border-radius: var(--md-shape-md); background: var(--md-surface-container-low); text-decoration: none; color: inherit; border: 1px solid var(--md-outline-variant); }
+        .chap .n { grid-row: 1 / span 2; font: 400 2rem/1 var(--md-font-brand); color: var(--md-tertiary); align-self: start; }
+        .chap b { font-weight: 700; }
+        .chap span:last-child { color: var(--md-on-surface-variant); font-size: .9rem; }
+        .lesson-link { margin: -8px 0 24px; }
+        .ch-intro { max-width: 68ch; margin: -4px 0 22px; padding-left: 16px; border-left: 3px solid var(--md-tertiary); }
+        @media (max-width: 900px) { .seven, .proj-cards.four { grid-template-columns: minmax(0, 1fr); } .lc-photos { grid-template-rows: 180px 180px; } }
+        @media (min-width: 901px) and (max-width: 1100px) { .proj-cards.four { grid-template-columns: repeat(2, 1fr); } }
+
+        .park-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+        .park-grid { display: grid; grid-template-columns: 1.6fr 1fr; grid-template-rows: 220px 220px; gap: 12px; margin-bottom: 24px; }
+        .park-photo { margin: 0; position: relative; border-radius: var(--md-shape-lg); overflow: hidden; }
+        .park-photo.big { grid-row: 1 / span 2; }
+        .park-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .park-photo figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 14px 10px; font: 600 .8125rem/1.3 var(--md-font-plain); color: #fff; background: linear-gradient(transparent, rgba(0, 0, 0, .7)); }
+        .park-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        .park-card { padding: 22px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); }
+        .park-card .md-icon-container { margin-bottom: 14px; }
+        .park-card p { margin-top: 8px; color: var(--md-on-surface-variant); }
+        .park-foot { display: grid; grid-template-columns: 1.3fr .7fr; gap: 14px; margin-top: 14px; }
+        .park-steps { padding: 22px; border-radius: var(--md-shape-lg); border: 1px solid var(--md-outline-variant); }
+        .park-steps ol { display: grid; gap: 10px; padding-left: 0; counter-reset: s; }
+        .park-steps li { counter-increment: s; position: relative; padding-left: 40px; line-height: 1.5; color: var(--md-on-surface-variant); }
+        .park-steps li b { color: var(--md-on-surface); }
+        .park-steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--md-tertiary); color: var(--md-on-tertiary); font: 700 .875rem/1 var(--md-font-plain); }
+        .park-cta { padding: 22px; border-radius: var(--md-shape-lg); background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); display: grid; gap: 10px; align-content: start; }
+        .park-cta .md-on-variant { color: inherit; opacity: .85; }
+        @media (max-width: 900px) { .park-grid { grid-template-columns: 1fr; grid-template-rows: 220px 180px 180px; } .park-photo.big { grid-row: auto; } .park-cards, .park-foot { grid-template-columns: 1fr; } }
+        .two-up { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+        .site-col h2 { margin-bottom: 14px; }
+        .site-col .md-list { margin-top: 24px; margin-left: -16px; }
+        .site-col .md-list-item { border-radius: var(--md-shape-md); }
+        .game-col { padding: clamp(20px, 2.6vw, 32px); border-radius: var(--md-shape-xl); box-shadow: var(--md-elev-3); display: grid; gap: 18px; }
+        .game-col .lead { margin-top: 8px; }
+        .game-frame { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: var(--md-shape-lg); overflow: hidden; background: var(--md-surface-container-lowest); }
+        .game-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .game-cover { position: absolute; inset: 0; width: 100%; border: 0; cursor: pointer; display: grid; place-items: center; text-align: center; padding: 24px; color: #f6f1e7; background: var(--md-surface-container-lowest); transition: opacity var(--md-dur-long) var(--md-ease-standard); }
+        .game-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.92); transition: transform var(--md-dur-long) var(--md-ease-decel); }
+        .game-cover:hover img { transform: scale(1.03); }
+        .game-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(29, 24, 20, .1), rgba(29, 24, 20, .7)); }
+        .game-cover .cover-text { position: relative; z-index: 1; }
+        .game-cover .cover-text .md-fab { margin: 0 auto 16px; }
+        .game-cover strong { display: block; font: 400 clamp(1.35rem, 2.6vw, 1.8rem)/1.2 var(--md-font-brand); }
+        .game-cover .sub { display: block; margin-top: 6px; color: #e6ddd0; font-size: .9375rem; }
+        .game-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 20px; }
+        .game-foot .keys { color: var(--md-on-surface-variant); font-size: .875rem; }
+        .game-foot .btn-row { margin: 0; gap: 4px; }
+        .game-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .game-thumbs img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: var(--md-shape-md); }
+
+        /* ---------- why support ---------- */
+        .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+        .pillar { padding: 26px 26px 28px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); }
+        .pillar .md-icon-container { margin-bottom: 20px; }
+        .pillar h3 { margin-bottom: 10px; }
+        .pillar p { color: var(--md-on-surface-variant); font-size: .9875rem; }
+
+        /* ---------- gallery ---------- */
+        .gallery { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 170px; grid-auto-flow: dense; gap: 10px; }
+        .gallery li { border-radius: var(--md-shape-md); overflow: hidden; }
+        .gallery li.w2 { grid-column: span 2; } .gallery li.h2 { grid-row: span 2; }
+        .gallery button { display: block; width: 100%; height: 100%; padding: 0; border: 0; cursor: zoom-in; background: var(--md-surface-container-high); }
+        .gallery img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--md-dur-long) var(--md-ease-decel); }
+        .gallery button:hover img { transform: scale(1.04); }
+
+        /* ---------- Chief Bear Cross (typographic) ---------- */
+        .address { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+        .address .quote { font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.3; }
+        .address .by { margin-top: 24px; display: flex; align-items: center; gap: 14px; }
+        .address .by b { display: block; font-weight: 600; }
+        .address .by span { color: var(--md-on-surface-variant); font-size: .9375rem; }
+        .address .photo { aspect-ratio: 1; border-radius: var(--md-shape-xl) var(--md-shape-md); }
+
+        /* ---------- Four Souls of Coyote ---------- */
+        .award-card { padding: clamp(28px, 3.6vw, 44px); border-radius: var(--md-shape-lg); border: 1px solid var(--md-outline-variant); background: var(--md-surface-container-lowest); text-align: center; max-width: 420px; width: 100%; justify-self: center; }
+        .award-card .wheel { width: 56px; height: 56px; margin: 0 auto 18px; }
+        .award-card .k { color: var(--md-tertiary); font: 600 .8125rem/1.3 var(--md-font-plain); letter-spacing: .12em; text-transform: uppercase; }
+        .award-card b { display: block; margin: 10px 0 6px; font: 400 clamp(1.7rem, 3vw, 2.2rem)/1.15 var(--md-font-brand); }
+        .award-card span.s { color: var(--md-on-surface-variant); }
+        .award-card hr { border: 0; height: 1px; background: var(--md-outline-variant); margin: 22px auto 16px; width: 72px; }
+
+        /* ---------- donate ---------- */
+        .give { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+        .give { grid-template-areas: 'copy ways' 'copy photo'; grid-template-rows: auto 1fr; }
+        .give > div:first-child { grid-area: copy; }
+        .give .ways { grid-area: ways; }
+        .give-photo { grid-area: photo; position: relative; border-radius: var(--md-shape-lg); align-self: stretch; min-height: 260px; }
+        .give-photo img { position: absolute; inset: 0; }
+        .receipt { display: flex; gap: 18px; align-items: center; margin-top: 28px; padding: 18px 22px; border-radius: var(--md-shape-md); border: 1px solid var(--md-outline-variant); }
+        .receipt b { font: 400 2rem/1 var(--md-font-brand); color: var(--md-tertiary); }
+        .ways { padding: 8px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); }
+        .ways .head { padding: 16px 16px 8px; }
+        .ways .md-list-item { min-height: 72px; border-radius: var(--md-shape-md); }
+        .ways address { font-style: normal; color: var(--md-on-surface-variant); }
+        .wish { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--md-outline-variant); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px clamp(32px, 5vw, 72px); align-items: start; }
+        .wish ul { columns: 2; gap: 24px; }
+        .wish li { display: flex; align-items: center; gap: 10px; min-height: 40px; break-inside: avoid; }
+        .wish li svg { width: 18px; height: 18px; fill: var(--md-tertiary); flex: none; }
+
+        /* ---------- visionary + join ---------- */
+        blockquote.soft { font: 400 clamp(1.3rem, 2.2vw, 1.6rem)/1.4 var(--md-font-brand); color: var(--md-primary); margin: 18px 0; }
+        .join { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(20px, 3vw, 40px); margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--md-outline-variant); align-items: start; }
+        .join .photo { aspect-ratio: 16/10; border-radius: var(--md-shape-lg); margin-bottom: 24px; }
+        .join .md-chips { margin-top: 20px; }
+        .contact { display: grid; gap: 20px; padding: clamp(22px, 3vw, 32px); border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); --md-field-bg: var(--md-surface-container-low); }
+
+        /* ---------- page heads (projects, culture) ---------- */
+        .page-head { position: relative; overflow: hidden; padding: 24px 0 28px; }
+        .page-head .md-btn.text { margin-left: -12px; margin-bottom: 12px; }
+        .page-head h1 { margin: 8px 0 10px; max-width: 18ch; }
+        .page-head p { max-width: 52ch; }
+        .page-head-in { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+        .page-head .photo { aspect-ratio: 16/10; border-radius: var(--md-shape-xl) var(--md-shape-md); }
+
+        /* ---------- projects ---------- */
+        .project { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+        .project p + p { margin-top: 14px; }
+        .ticks { display: grid; gap: 2px; margin: 24px 0 28px; max-width: 30rem; }
+        .ticks li { display: flex; align-items: center; gap: 12px; min-height: 44px; font-weight: 600; }
+        .ticks svg { width: 22px; height: 22px; fill: var(--md-primary); }
+        .stat-col { display: grid; gap: 16px; }
+        .stat { padding: 28px 30px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); }
+        .stat b { display: block; font: 400 clamp(3rem, 6vw, 4.2rem)/1 var(--md-font-brand); color: var(--md-tertiary); }
+        .stat p { margin-top: 10px; color: var(--md-on-surface-variant); }
+        .stat-col .photo { aspect-ratio: 4/3; border-radius: var(--md-shape-lg); }
+        .proj-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .proj-card { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); }
+        .proj-card .photo { aspect-ratio: 4/3; border-radius: 0; }
+        .proj-card .body { padding: 22px 24px 26px; display: grid; gap: 8px; }
+        .proj-card p { color: var(--md-on-surface-variant); }
+        .proj-card .soon { color: var(--md-tertiary); font: 600 .8125rem/1.3 var(--md-font-plain); letter-spacing: .06em; text-transform: uppercase; margin-top: 6px; }
+
+        /* ---------- culture ---------- */
+        .culture-tabs { position: sticky; top: 64px; z-index: 90; }
+        .chapter { padding: clamp(32px, 4vw, 56px) 0; scroll-margin-top: 120px; background: var(--md-surface); color: var(--md-on-surface); }
+        .chapter.tone-low { background: var(--md-surface-container-low); }
+        .ch-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 3vw, 32px); align-items: end; margin-bottom: 20px; }
+        .ch-head .num { display: block; color: var(--md-tertiary); font: 400 .95rem/1 var(--md-font-brand); letter-spacing: .1em; margin-bottom: 14px; }
+        .ch-head .photo { aspect-ratio: 16/9; border-radius: var(--md-shape-lg); }
+        .ch-head .photo.tall { aspect-ratio: 5/4; }
+        .ch-head.plain { grid-template-columns: minmax(0, 1fr); align-items: start; }
+        .two { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px); }
+        .two p + p { margin-top: 12px; }
+        .fires { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+        .fire { padding: 22px 24px; border-radius: var(--md-shape-md); border: 1px solid var(--md-outline-variant); }
+        .fire h4 { font: 400 1.25rem/1.3 var(--md-font-brand); padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid var(--md-outline-variant); }
+        .fire li { padding: 8px 0; }
+        .fire li b { display: block; }
+        .fire li em, .fire li span { color: var(--md-on-surface-variant); font-size: .9375rem; }
+        .creation { padding: 24px; border-radius: var(--md-shape-md); background: var(--md-surface-container-high); }
+        .callout { padding: clamp(24px, 3vw, 36px); margin-bottom: 24px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-high); display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 28px; align-items: center; }
+        .callout .photo { aspect-ratio: 4/5; border-radius: var(--md-shape-md); }
+        .rites { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 clamp(24px, 4vw, 48px); }
+        .rites > div { padding: 18px 0; border-bottom: 1px solid var(--md-outline-variant); }
+        .rites dt { font-weight: 600; color: var(--md-on-surface); }
+        .rites dd { color: var(--md-on-surface-variant); margin-top: 4px; font-size: .9875rem; }
+        .story-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .story-grid.wide { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .story-grid.wide .story { aspect-ratio: 1; }
+        .story { position: relative; display: block; width: 100%; padding: 0; border: 0; text-align: left; border-radius: var(--md-shape-md); overflow: hidden; aspect-ratio: 4/5; cursor: pointer; background: var(--md-surface-container-high); color: var(--md-on-surface); box-shadow: var(--md-elev-1); transition: box-shadow var(--md-dur-medium), transform var(--md-dur-medium) var(--md-ease-decel); }
+        .story:hover { box-shadow: var(--md-elev-3); transform: translateY(-2px); }
+        .story img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--md-dur-long) var(--md-ease-decel); }
+        .story:hover img { transform: scale(1.04); }
+        .story .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 56px 16px 16px; color: #fff; background: linear-gradient(transparent, rgba(20, 14, 10, .82)); }
+        .story .cap.plain { position: relative; min-height: 100%; color: inherit; background: none; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .story .cap b { display: block; font: 400 1.25rem/1.25 var(--md-font-brand); }
+        .story .cap span { font-size: .8125rem; opacity: .92; }
+        .timeline { position: relative; display: grid; gap: 0; margin-left: 10px; padding-left: 34px; border-left: 2px solid var(--md-outline-variant); }
+        .timeline li { position: relative; padding: 0 0 36px; max-width: 64ch; }
+        .timeline li:last-child { padding-bottom: 0; }
+        .timeline li::before { content: ''; position: absolute; left: -42px; top: 10px; width: 14px; height: 14px; border-radius: 50%; background: var(--md-tertiary); box-shadow: 0 0 0 4px var(--md-surface); }
+        .timeline .yr { color: var(--md-tertiary); font: 600 .8125rem/1.3 var(--md-font-plain); letter-spacing: .08em; }
+        .timeline h3 { margin: 4px 0 8px; }
+        .timeline p { color: var(--md-on-surface-variant); }
+        .resist { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+        .resist .photo { aspect-ratio: 4/5; border-radius: var(--md-shape-lg); position: sticky; top: 140px; }
+        .feature { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); gap: 28px; align-items: center; padding: clamp(22px, 3vw, 32px); margin-bottom: 24px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); }
+        .feature .photo { aspect-ratio: 4/3; border-radius: var(--md-shape-md); }
+        .inv { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 clamp(24px, 4vw, 56px); counter-reset: inv; }
+        .inv li { display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--md-outline-variant); counter-increment: inv; }
+        .inv li::before { content: counter(inv, decimal-leading-zero); color: var(--md-tertiary); font: 400 1.1rem/1.5 var(--md-font-brand); }
+        .inv p { margin-top: 4px; color: var(--md-on-surface-variant); }
+        .inv-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: clamp(32px, 5vw, 72px); align-items: start; }
+        .inv-wrap .photo { aspect-ratio: 1; border-radius: var(--md-shape-lg); }
+
+        /* ---------- footer ---------- */
+        .foot { color: var(--md-on-surface); }
+        .foot-in { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 24px; padding: 32px 0 20px; }
+        .foot h4 { margin-bottom: 8px; color: var(--md-tertiary); }
+        .foot a { text-decoration: none; color: var(--md-on-surface); display: inline-flex; align-items: center; min-height: 40px; }
+        .foot .small { padding: 20px 0 32px; border-top: 1px solid var(--md-outline-variant); color: var(--md-on-surface-variant); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+        /* ---------- story dialog ---------- */
+        .sd { display: grid; grid-template-columns: .85fr 1.15fr; }
+        .sd-img { background: var(--md-surface-container-highest); min-height: 280px; }
+        .sd-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+        .sd-body { position: relative; padding: 28px 28px 20px; }
+        .sd-body .native { color: var(--md-tertiary); font-weight: 600; }
+        .sd-body .meta { color: var(--md-on-surface-variant); margin: 6px 0 12px; }
+        .sd-body .aspire { margin: 12px 0; padding: 12px 16px; border-radius: var(--md-shape-sm); background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); }
+        #sd-content p + p { margin-top: 12px; }
+        #sd-quote { margin: 16px 0 0; padding-left: 16px; border-left: 3px solid var(--md-tertiary); font: 400 1.15rem/1.5 var(--md-font-brand); }
+
+        /* ---------- chat helper ---------- */
+        .chat-fab { position: fixed; right: 20px; bottom: 20px; z-index: 150; }
+        .chat { position: fixed; right: 20px; bottom: 92px; z-index: 160; width: min(390px, calc(100vw - 32px)); height: min(560px, calc(100vh - 120px)); display: none; flex-direction: column; border-radius: var(--md-shape-xl); overflow: hidden; background: var(--md-surface-container-high); color: var(--md-on-surface); box-shadow: var(--md-elev-4); }
+        .chat.open { display: flex; animation: md-dialog-in var(--md-dur-medium) var(--md-ease-decel); }
+        .chat-top { display: flex; align-items: center; gap: 12px; padding: 12px 8px 12px 20px; background: var(--md-surface-container-highest); }
+        .chat-top img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .chat-top div { flex: 1; min-width: 0; line-height: 1.3; }
+        .chat-top small { display: block; color: var(--md-on-surface-variant); }
+        .chat-msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 86%; padding: 12px 16px; line-height: 1.5; font-size: .9375rem; }
+        .msg.bot { align-self: flex-start; background: var(--md-surface-container-highest); border-radius: 4px 20px 20px 20px; }
+        .msg.me { align-self: flex-end; background: var(--md-primary); color: var(--md-on-primary); border-radius: 20px 4px 20px 20px; }
+        .msg a { color: var(--md-primary); font-weight: 600; }
+        #chat-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 12px; }
+        #chat-chips button { display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border: 1px solid var(--md-outline); border-radius: var(--md-shape-sm); background: transparent; color: var(--md-on-surface-variant); font: 600 .875rem/1 var(--md-font-plain); cursor: pointer; }
+        #chat-chips button:hover { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+        #chat-form { display: flex; gap: 8px; align-items: center; padding: 10px 12px 14px 16px; background: var(--md-surface-container-highest); }
+        #chat-form input { flex: 1; min-height: 46px; padding: 0 20px; border: 0; border-radius: var(--md-shape-full); background: var(--md-surface-container-lowest); color: var(--md-on-surface); font: inherit; min-width: 0; }
+        #chat-form input:focus { outline: 2px solid var(--md-primary); }
+
+        /* ---------- responsive ---------- */
+        @media (max-width: 1020px) {
+            .pillars, .proj-cards { grid-template-columns: 1fr 1fr; }
+            .gallery { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 170px; }
+        }
+        @media (max-width: 900px) {
+            .give { grid-template-areas: 'copy' 'ways' 'photo'; grid-template-rows: auto; }
+            .hero-in, .two-up, .split, .give, .join, .project, .two, .feature, .sd, .foot-in, .page-head-in, .address, .ch-head, .resist, .inv-wrap, .wish, .callout { grid-template-columns: minmax(0, 1fr); }
+            .pillars, .proj-cards, .fires, .rites, .inv { grid-template-columns: 1fr; }
+            .hero::before { background: linear-gradient(180deg, rgba(31, 47, 42, .82), rgba(55, 76, 69, .6) 55%, rgba(36, 50, 46, .8)); }
+            .sd-img { max-height: 240px; }
+            .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; }
+            .photo.arch { max-width: 340px; }
+            .resist .photo { position: static; aspect-ratio: 16/10; }
+            .address .photo { max-width: 420px; }
+            .callout .photo { max-width: 240px; }
+            .wish ul { columns: 1; }
+        }
+        @media (max-width: 700px) {
+            .wrap { width: min(1200px, 100% - 32px); }
+            .game-frame { aspect-ratio: auto; height: min(70vh, 480px); }
+            .btn-row .md-btn { flex: 1 1 100%; }
+            .ch-head .photo { aspect-ratio: 16/10; }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="wheel" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="18.5" fill="#1e1915" stroke="#dbb86a" stroke-width="2.5" />
+            <path d="M20 20V3.5A16.5 16.5 0 0 1 36.5 20Z" fill="#dbb86a" />
+            <path d="M20 20H36.5A16.5 16.5 0 0 1 20 36.5Z" fill="#b5391f" />
+            <path d="M20 20V36.5A16.5 16.5 0 0 1 3.5 20Z" fill="#1e1915" />
+            <path d="M20 20H3.5A16.5 16.5 0 0 1 20 3.5Z" fill="#f6efe0" />
+            <circle cx="20" cy="20" r="3.2" fill="#3fbfb4" stroke="#1e1915" stroke-width="1.2" />
+        </symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></symbol>
+        <symbol id="i-expand" viewBox="0 0 24 24"><path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z" /></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></symbol>
+        <symbol id="i-fullscreen" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" /></symbol>
+        <symbol id="i-open" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" /></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" /></symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></symbol>
+        <symbol id="i-send" viewBox="0 0 24 24"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z" /></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" /></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" /></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></symbol>
+        <symbol id="i-tick" viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" /></symbol>
+        <symbol id="i-school" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l11 6 9-5.18V17h2V9L12 3z" /></symbol>
+        <symbol id="i-card" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></symbol>
+        <symbol id="i-park" viewBox="0 0 24 24"><path d="M17 12h2L12 2 5.05 12H7l-3.9 6h6.12v4h3.86v-4H20l-3-6z" /></symbol>
+        <symbol id="i-terrain" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z" /></symbol>
+        <symbol id="i-bag" viewBox="0 0 24 24"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm0 10c-2.76 0-5-2.24-5-5h2c0 1.66 1.34 3 3 3s3-1.34 3-3h2c0 2.76-2.24 5-5 5z" /></symbol>
+        <symbol id="i-fb" viewBox="0 0 24 24"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.2v2.3H7.7V14h2.7v8z" /></symbol>
+        <symbol id="i-ig" viewBox="0 0 24 24"><path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" /></symbol>
+    </svg>
+
+    <!-- ================= TOP APP BAR ================= -->
+    <header class="md-app-bar scheme-dark" id="app-bar">
+        <div class="bar-in">
+            <a class="md-brand md-state" href="#home" aria-label="Sacred Ones home"><img src="assets/logo-emblem-small.jpg" alt="" width="36" height="36"> Sacred Ones</a>
+            <button class="md-icon-btn md-state md-menu-btn" id="burger" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="menu"><svg aria-hidden="true"><use href="#i-menu" /></svg></button>
+            <nav class="md-nav" id="menu" aria-label="Main">
+                <div class="drawer-head">
+                    <span class="md-brand"><img src="assets/logo-emblem-small.jpg" alt="" width="36" height="36"> Sacred Ones</span>
+                    <button class="md-icon-btn md-state" id="drawer-close" type="button" aria-label="Close navigation menu"><svg aria-hidden="true"><use href="#i-close" /></svg></button>
+                </div>
+                <a class="nav-item md-state" href="#about">Our mission</a>
+                <div class="md-menu-wrap">
+                    <button class="nav-item md-state" type="button" aria-expanded="false" aria-haspopup="true" data-drop="d-projects">Projects <svg class="caret" aria-hidden="true"><use href="#i-expand" /></svg></button>
+                    <div class="md-menu" id="d-projects">
+                        <a class="md-state" href="#projects">AI data center <small>Economic sovereignty</small></a>
+                        <a class="md-state" href="#park">Sacred Village park <small>Lodging, camping, education center</small></a>
+                        <a class="md-state" href="#projects">Bison release <small>Ecological balance</small></a>
+                        <a class="md-state" href="#projects">Living culture <small>Jingle dress and drum</small></a>
+                    </div>
+                </div>
+                <div class="md-menu-wrap">
+                    <button class="nav-item md-state" type="button" aria-expanded="false" aria-haspopup="true" data-drop="d-culture">Culture <svg class="caret" aria-hidden="true"><use href="#i-expand" /></svg></button>
+                    <div class="md-menu" id="d-culture">
+                        <a class="md-state" href="#guardians">Guardians <small>Biographies</small></a>
+                        <a class="md-state" href="#legends">Sacred legends and lore</a>
+                        <a class="md-state" href="#ingenuity">Indigenous ingenuity</a>
+                        <a class="md-state" href="#culture">Read the full archive</a>
+                        <a class="md-state" href="lessons/index.html">Seven lessons <small>Classroom-ready, with pictures and links</small></a>
+                    </div>
+                </div>
+                <a class="nav-item md-state" href="#our-game">Play</a>
+                <a class="nav-item md-state" href="store/store.html">Store</a>
+                <a class="nav-item md-state" href="#contact">Contact</a>
+                <a class="nav-item donate md-state" href="#donate">Donate</a>
+            </nav>
+        </div>
+    </header>
+    <div class="md-scrim" id="scrim"></div>
+
+    <main id="main">
+
+        <!-- =========================== HOME =========================== -->
+        <div class="view active" id="view-home">
+
+            <!-- HERO: Sacred Adventures banner over the autoplaying site video -->
+            <section class="hero" aria-labelledby="hero-title">
+                <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" id="hero-video" poster="https://sacredones.org/wp-content/uploads/2025/05/1000002596-768x1024.jpg">
+                    <source src="https://sacredones.org/wp-content/uploads/2025/01/Gen-3-Alpha-Turbo-3543592665-The-feeling-of-home-Cropped-omp4111_La-M-5-1.mp4" type="video/mp4">
+                </video>
+                <div class="wrap hero-in">
+                    <div class="hero-copy">
+                        <div class="hero-brand"><img src="assets/logo-emblem.jpg" alt="Sacred Ones emblem" width="56" height="56"><span>Oceti Sakowin · Fort Peck Reservation</span></div>
+                        <h1 class="md-display-large" id="hero-title">Give them a chance to dream again.</h1>
+                        <p class="lede">A nonprofit building youth technology jobs, a healing ancestral park, and the return of the buffalo. Heal. Educate. Protect. Empower.</p>
+                        <div class="btn-row">
+                            <a class="md-btn filled tertiary md-state" href="#donate">Support the dream</a>
+                            <a class="md-btn outlined md-state" href="#our-game">Play Sacred Adventures</a>
+                        </div>
+                    </div>
+                    <figure class="hero-banner">
+                        <img src="assets/banner-sacred-adventures.jpg" alt="Sacred Adventures: a 3D web-browser game. Build your own village, meet the people in first person, then manage the whole village from above. Kickstarter ready, 60 to 120 FPS, a non-violent cultural game." width="1526" height="1280" fetchpriority="high">
+                    </figure>
+                </div>
+            </section>
+
+            <!-- WEBSITE CONTINUES (left) + OUR GAME (right) -->
+            <section class="section" id="our-game" aria-labelledby="game-title">
+                <div class="wrap two-up">
+                    <div class="site-col">
+                        <span class="md-eyebrow">The website</span>
+                        <h2 class="md-headline-large">Heal. Educate. Protect. Empower.</h2>
+                        <p class="md-body-large md-on-variant">Everything Sacred Ones is building lives on this page: our mission, the projects, the Oceti Sakowin archive, and the store. Keep scrolling, or jump straight in.</p>
+                        <div class="md-list">
+                            <a class="md-list-item md-state" href="#about"><span class="md-icon-container"><svg aria-hidden="true"><use href="#i-heart" /></svg></span><span class="md-li-text"><span class="md-li-head">Why support a reservation</span><span class="md-li-support">Our mission in three pillars</span></span></a>
+                            <a class="md-list-item md-state" href="#projects"><span class="md-icon-container tertiary"><svg aria-hidden="true"><use href="#i-terrain" /></svg></span><span class="md-li-text"><span class="md-li-head">Projects</span><span class="md-li-support">AI data center, ancestral park, bison release</span></span></a>
+                            <a class="md-list-item md-state" href="#culture"><span class="md-icon-container secondary"><svg aria-hidden="true"><use href="#i-school" /></svg></span><span class="md-li-text"><span class="md-li-head">The archive</span><span class="md-li-support">History, cosmology and resistance</span></span></a>
+                            <a class="md-list-item md-state" href="store/store.html"><span class="md-icon-container"><svg aria-hidden="true"><use href="#i-bag" /></svg></span><span class="md-li-text"><span class="md-li-head">Store</span><span class="md-li-support">Wear the movement</span></span></a>
+                        </div>
+                        <a class="event-strip md-state" href="#gallery" aria-label="See photos from our May 30 community event">
+                            <img src="assets/events/2026-05-30/event-02.jpg" alt="" loading="lazy"><img src="assets/events/2026-05-30/event-01.jpg" alt="" loading="lazy"><img src="assets/events/2026-05-30/event-16.jpg" alt="" loading="lazy">
+                            <span class="event-cap"><b>Community day, May 30</b><span>See the photos</span></span>
+                        </a>
+                    </div>
+                    <div class="game-col scheme-bark" id="game-section">
+                        <div>
+                            <span class="md-eyebrow">Our game · pre-release</span>
+                            <h2 class="md-headline-large" id="game-title">Sacred Adventures</h2>
+                            <p class="md-on-variant lead">Build your own village, meet the people in first person, then manage it all from above. Every tipi you raise, every fish you catch and every story you are told comes from the archive below, so the game teaches while it plays. It runs in the browser on desktop and phone, and it is non-violent by design.</p>
+                        </div>
+                        <div class="game-frame" id="game-view">
+                            <button class="game-cover md-state" id="game-cover" type="button" aria-label="Launch Sacred Adventures">
+                                <img src="assets/game-cover.jpg" alt="" aria-hidden="true">
+                                <span class="cover-text">
+                                    <span class="md-fab large" aria-hidden="true"><svg><use href="#i-play" /></svg></span>
+                                    <strong>Launch the game</strong>
+                                    <span class="sub">Loads right here, no download</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="game-foot">
+                            <p class="keys">Move with WASD, arrows or touch · look with the mouse or drag</p>
+                            <div class="btn-row">
+                                <button class="md-btn tonal has-icon md-state" id="fs-btn" type="button"><svg aria-hidden="true"><use href="#i-fullscreen" /></svg> Full screen</button>
+                                <a class="md-btn text has-icon md-state" href="https://www.sacredones.org/SacredAdventures/SacredOnes.html" target="_blank" rel="noopener noreferrer">New tab <svg aria-hidden="true"><use href="#i-open" /></svg></a>
+                            </div>
+                        </div>
+                        <div class="game-thumbs">
+                            <img src="assets/game-map.jpg" alt="Top-down village map with the compass ring" loading="lazy">
+                            <img src="assets/game-horse.jpg" alt="First-person view beside a tipi with a spirit horse" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="md-bead" aria-hidden="true"></div>
+
+            <!-- WHY SUPPORT -->
+            <section class="section tone-low" id="about" aria-labelledby="why-title">
+                <div class="wrap">
+                    <div class="split">
+                        <figure class="photo arch"><img src="https://sacredones.org/wp-content/uploads/2025/05/1000002596-768x1024.jpg" alt="A white tipi on the prairie with a child standing in the doorway" loading="lazy" width="1920" height="2560"></figure>
+                        <div class="stack">
+                            <span class="md-eyebrow">Our mission</span>
+                            <h2 class="md-display-small" id="why-title">Why support a reservation?</h2>
+                            <p class="quote">Reservations are often forgotten pockets of America, facing systemic economic isolation and a lack of critical infrastructure. By supporting Sacred Ones, you aren't just giving charity. You are investing in <strong>sovereign solutions</strong> that break generational cycles.</p>
+                            <p class="md-on-variant">We are building a future where our youth can thrive right here at home.</p>
+                            <p class="md-on-variant">Fort Peck sits where the Missouri bends through northeast Montana: Assiniboine and Sioux country, two million acres of prairie, river bottom and sky. Our grandparents were told their language, their ceremonies and their way of feeding themselves had no place in the modern world. Everything on this page answers that. A data center on tribal ground. A park where the stories are told in the open air. Buffalo on the grass again. These are not separate wishes; they are one plan to make home a place a young person chooses to stay.</p>
+                        </div>
+                    </div>
+                    <div class="pillars">
+                        <article class="pillar">
+                            <div class="md-icon-container"><svg aria-hidden="true"><use href="#i-school" /></svg></div>
+                            <h3 class="md-title-large">Bridging the economic gap</h3>
+                            <p>Unemployment on reservations can be staggeringly high due to geographic isolation. Our AI data center skips the industrial age and leaps into the digital future, bringing high-paying tech jobs directly to our doorstep.</p>
+                        </article>
+                        <article class="pillar">
+                            <div class="md-icon-container tertiary"><svg aria-hidden="true"><use href="#i-heart" /></svg></div>
+                            <h3 class="md-title-large">Healing historical trauma</h3>
+                            <p>Generations of erasure have left deep scars. Reconnecting our youth with the land, the buffalo and their ancestors in our ancestral park provides essential mental health support and spiritual grounding.</p>
+                        </article>
+                        <article class="pillar">
+                            <div class="md-icon-container secondary"><svg aria-hidden="true"><use href="#i-shield" /></svg></div>
+                            <h3 class="md-title-large">Protecting sovereignty</h3>
+                            <p>True independence comes from self-sufficiency. Your support helps us build our own energy, food systems (bison) and educational facilities, reducing reliance on broken federal systems.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEVEN GENERATIONS -->
+            <section class="section scheme-moss" id="seven" aria-labelledby="seven-title">
+                <div class="wrap seven">
+                    <div>
+                        <span class="md-eyebrow">Seven generations strong</span>
+                        <h2 class="md-display-small" id="seven-title">Honor the past. Build the future.</h2>
+                    </div>
+                    <div class="seven-text">
+                        <p class="md-body-large">Our emblem carries four words around its rim: <strong>Our people. Our land. Our culture. Our future.</strong> They are the order we work in. People first, because a hungry child cannot learn to code. Land second, because a people without a place to gather is a people scattered. Culture third, because the songs and the language are the proof that we survived. Future last, because it is the only thing we are allowed to give away.</p>
+                        <p class="md-on-variant">The Oceti Sakowin teach that every decision should be weighed against its effect seven generations ahead. Measured that way, a laptop for a student, a sewing machine for an elder, a season of hay for a bison herd stop being charity. They are seeds, and the harvest belongs to children who are not yet born.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROJECTS PREVIEW -->
+            <section class="section" id="projects-home" aria-labelledby="ph-title">
+                <div class="wrap">
+                    <div class="section-head row">
+                        <div><span class="md-eyebrow">What we are building</span><h2 class="md-display-small" id="ph-title">Four projects, one dream</h2></div>
+                        <a class="md-btn outlined md-state" href="#projects">Read the project plans</a>
+                    </div>
+                    <div class="proj-cards four">
+                        <a class="proj-card md-state" href="#projects"><figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/06/3d-teepee-600x600.png" alt="A tipi drawn in glowing blue wireframe" loading="lazy" onerror="this.onerror=null;this.src='https://sacredones.org/wp-content/uploads/2025/06/3d-teepee.png'"></figure><div class="body"><h3 class="md-title-large">Youth AI jobs and data center</h3><p>Green-powered servers on sovereign ground, and a classroom where our youth learn to run them. High-wage work without leaving home.</p></div></a>
+                        <a class="proj-card md-state" href="#park"><figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/omp4111_Beautiful_tranquil_Sioux_Nation_amusement_park_with_nat_169e9f60-2841-4d78-8285-ce6930e73501.png" alt="Concept art of a tipi village beside a river" loading="lazy" onerror="this.onerror=null;this.src='https://sacredones.org/wp-content/uploads/2025/03/omp4111_Beautiful_tranquil_Sioux_Nation_amusement_park_with_nat_169e9f60-2841-4d78-8285-ce6930e73501.png'"></figure><div class="body"><h3 class="md-title-large">Ancestral park</h3><p>Woods, water and open sky. A place for storytelling, traditional games and quiet, built for healing rather than noise.</p></div></a>
+                        <a class="proj-card md-state" href="#projects"><figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/06/3dbuffalo-600x600.png" alt="A buffalo drawn in glowing blue wireframe" loading="lazy" onerror="this.onerror=null;this.src='https://sacredones.org/wp-content/uploads/2025/06/3dbuffalo.png'"></figure><div class="body"><h3 class="md-title-large">Bison release</h3><p>Tatanka back on the prairie. The herd restores the grassland, feeds families, and returns a relative we were never meant to lose.</p></div></a>
+                        <a class="proj-card md-state" href="#living-culture"><figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/01/FB_IMG_1736185782560-600x750.jpg" alt="A jingle dress dancer in full regalia" loading="lazy" onerror="this.onerror=null;this.src='https://sacredones.org/wp-content/uploads/2025/01/FB_IMG_1736185782560.jpg'"></figure><div class="body"><h3 class="md-title-large">Living culture</h3><p>Jingle dress, drum and language, carried by the people who still practice them. Regalia, lessons and gatherings for the next dancers.</p></div></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SACRED VILLAGE PARK -->
+            <section class="section scheme-bark" id="park" aria-labelledby="park-title">
+                <div class="wrap">
+                    <div class="park-head">
+                        <div>
+                            <span class="md-eyebrow">The ancestral park · our biggest dream</span>
+                            <h2 class="md-display-small" id="park-title">A living Sioux village you can stay in.</h2>
+                            <p class="md-body-large" style="margin-top:14px;max-width:62ch">The game you can play above is the blueprint for a real place. Every tipi, lodge, arbor and fishing pool players build in Sacred Adventures is a piece of the Sacred Village: a re-enactment village and cultural education center on Fort Peck land, where visitors live a few days the way our ancestors lived, and where our youth are the guides, the cooks, the singers and the teachers.</p>
+                        </div>
+                        <a class="md-btn filled tertiary md-state" href="#donate">Help build the village</a>
+                    </div>
+                    <div class="park-grid">
+                        <figure class="park-photo big"><img src="https://sacredones.org/wp-content/uploads/2025/03/omp4111_luxury_sioux_nation_amusement_park_with_authentic_india_17c184f0-2a6c-4f57-a23e-db1582acf79c.png" alt="Concept art of the Sacred Village: painted lodges beside a river under the open sky" loading="lazy"><figcaption>Concept: the village circle at the river</figcaption></figure>
+                        <figure class="park-photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/omp4111_this_color_scheme_with_a_Sioux_Indian_Native_Bed_and_Br_6c3684fc-549e-436c-841b-710afbf90e9d.png" alt="Concept art of a luxury tipi interior with beds, hides and lanterns" loading="lazy"><figcaption>Concept: a luxury lodge interior</figcaption></figure>
+                        <figure class="park-photo"><img src="assets/commons/great-camp-1891.jpg" alt="The great Lakota camp of 1891, photographed by John Grabill" loading="lazy"><figcaption>What we are rebuilding: the camp circle, 1891</figcaption></figure>
+                    </div>
+                    <div class="park-cards">
+                        <article class="park-card">
+                            <span class="md-icon-container tertiary"><svg aria-hidden="true"><use href="#i-park" /></svg></span>
+                            <h3 class="md-title-large">The re-enactment village</h3>
+                            <p>A full camp circle raised the old way: lodges set by family, a council arbor at the center, a drying rack, a horse line and a sweat lodge by the water. Guides in regalia walk you through a day in 1850: tanning, cooking, games, songs, the stories behind every painted lodge. Nothing behind glass. Everything in use.</p>
+                        </article>
+                        <article class="park-card">
+                            <span class="md-icon-container"><svg aria-hidden="true"><use href="#i-school" /></svg></span>
+                            <h3 class="md-title-large">Cultural education center</h3>
+                            <p>A year-round building for classes, language nights, the youth drum, a winter-count gallery and a small theater for films like <em>Four Souls of Coyote</em>. School groups from across Montana and the Dakotas get a curriculum that matches Indian Education for All; our own kids get a place to learn from their elders every week.</p>
+                        </article>
+                        <article class="park-card">
+                            <span class="md-icon-container secondary"><svg aria-hidden="true"><use href="#i-heart" /></svg></span>
+                            <h3 class="md-title-large">Tipi lodging, two ways</h3>
+                            <p><strong>Luxury lodges</strong> with real beds, buffalo robes, wood stoves, a private bath house and a dawn breakfast at the fire. <strong>Economy tipis</strong> with cots, blankets and a shared kitchen at a price a family on the reservation can afford. Both look out on the same river and the same stars. Rates will be published here when we open bookings.</p>
+                        </article>
+                        <article class="park-card">
+                            <span class="md-icon-container tertiary"><svg aria-hidden="true"><use href="#i-terrain" /></svg></span>
+                            <h3 class="md-title-large">Free camping, RV and campsite services</h3>
+                            <p>A free primitive camping area on the grass for anyone who wants to bring a tent and a good attitude, plus RV pads and serviced campsites with water, power, dump station, firewood and showers for a modest fee. Camp cheap, spend the savings in the village, and go home with a story.</p>
+                        </article>
+                    </div>
+                    <div class="park-foot">
+                        <div class="park-steps">
+                            <span class="md-eyebrow">How the game builds the park</span>
+                            <ol>
+                                <li><b>Play.</b> Sacred Adventures is free. Every village built in the game is a vote for what the real one should hold.</li>
+                                <li><b>Fund.</b> The Kickstarter for the full game release, and donations on this page, pay for the first lodges and the land work.</li>
+                                <li><b>Raise.</b> Our youth crew builds the camp circle with elders directing, exactly the way they practiced it on screen.</li>
+                                <li><b>Open.</b> Bookings, school visits and camping go live here. Revenue stays on the reservation and funds the next phase.</li>
+                            </ol>
+                        </div>
+                        <div class="park-cta">
+                            <p class="md-headline-small">Want first word when the lodges open?</p>
+                            <p class="md-on-variant">Write to us and we will put you on the list for opening weekend, group rates and school visits.</p>
+                            <a class="md-btn tonal has-icon md-state" href="mailto:sacredones22@gmail.com?subject=Sacred%20Village%20park%20interest&body=Please%20add%20me%20to%20the%20list%20for%20the%20Sacred%20Village%20park.%0A%0AName%3A%0AInterested%20in%3A%20(luxury%20tipi%20%2F%20economy%20tipi%20%2F%20camping%20%2F%20RV%20%2F%20school%20visit)%0A"><svg aria-hidden="true"><use href="#i-mail" /></svg> Join the opening list</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LIVING CULTURE -->
+            <section class="section tone-low" id="living-culture" aria-labelledby="lc-title">
+                <div class="wrap split">
+                    <div class="stack">
+                        <span class="md-eyebrow">Living culture</span>
+                        <h2 class="md-display-small" id="lc-title">The jingle dress was made for healing.</h2>
+                        <p class="md-body-large">The story is told across Ojibwe and Dakota country: during the influenza years a father dreamed of a dress sewn with rolled tin cones, and of his sick daughter dancing in it until she was well. A century later the dress still rings in our arenas, hundreds of cones moving like rain on a tipi.</p>
+                        <p class="md-on-variant">Sacred Ones helps families sew regalia, brings drum groups to school gyms, and pays travel for young dancers to reach the powwow circuit. When you see our children in the circle, you are seeing the oldest medicine we have.</p>
+                        <div class="btn-row"><a class="md-btn filled md-state" href="#donate">Sponsor a dancer</a><a class="md-btn text md-state" href="#culture">Open the archive</a></div>
+                    </div>
+                    <div class="lc-photos"><img src="https://sacredones.org/wp-content/uploads/2025/03/IMG20241014142419-1024x768.jpg" alt="Dancers and children in a school gym" loading="lazy" onerror="this.onerror=null;this.src='https://sacredones.org/wp-content/uploads/2025/03/IMG20241014140630.jpg'"><img src="https://sacredones.org/wp-content/uploads/2025/01/Screenshot_20250106_115109_Facebook1.jpg" alt="A young jingle dress dancer in an arena" loading="lazy" onerror="this.onerror=null;this.src='https://sacredones.org/wp-content/uploads/2025/01/Screenshot_20250106_115109_Facebook1.jpg'"><img src="https://sacredones.org/wp-content/uploads/2025/03/IMG20241014140630-768x1024.jpg" alt="A dancer in jingle dress regalia beside a drum" loading="lazy" onerror="this.onerror=null;this.src='https://sacredones.org/wp-content/uploads/2025/03/IMG20241014142419-scaled.jpg'"></div>
+                </div>
+            </section>
+
+            <!-- EVENT GALLERY -->
+            <section class="section" id="gallery" aria-labelledby="gal-title">
+                <div class="wrap">
+                    <div class="section-head">
+                        <span class="md-eyebrow">Community · May 30, 2026</span>
+                        <h2 class="md-display-small" id="gal-title">Bikes, bounce houses and family</h2>
+                        <p>On a gray spring evening the whole community came out to the park: bounce houses, a table of giveaways, a row of brand-new bikes with the tags still on, and matching black Sacred Ones shirts for every child who wanted one. No speeches. Just food, play and the sound of kids finding out the bikes were theirs to keep. Tap any photo to see it larger.</p>
+                    </div>
+                    <ul class="gallery" id="gallery-grid"></ul>
+                </div>
+            </section>
+
+            <!-- CHIEF BEAR CROSS -->
+            <!-- ARCHIVE PREVIEW -->
+            <section class="section" id="archive-home" aria-labelledby="ah-title">
+                <div class="wrap">
+                    <div class="section-head row">
+                        <div><span class="md-eyebrow">Culture and history</span><h2 class="md-display-small" id="ah-title">The Oceti Sakowin archive</h2>
+                        <p class="md-on-variant md-measure" style="margin-top:10px">Seven chapters, written for our own young people first: who we are, how the world was made, what was promised, who stood up, and what we invented. Read it as a book, or open any chapter.</p></div>
+                        <div class="btn-row" style="margin:0"><a class="md-btn filled md-state" href="lessons/index.html">Open the seven lessons</a><a class="md-btn outlined md-state" href="#culture">Read the archive</a></div>
+                    </div>
+                    <div class="chapters">
+                        <a class="chap md-state" href="#ch-intro"><span class="n">1</span><b>Identity</b><span>The Seven Council Fires and why we do not say "Sioux"</span></a>
+                        <a class="chap md-state" href="#ch-cosmos"><span class="n">2</span><b>Cosmology</b><span>Wakan Tanka, Inyan the Rock, and Turtle Island</span></a>
+                        <a class="chap md-state" href="#ch-covenant"><span class="n">3</span><b>Sacred covenant</b><span>White Buffalo Calf Woman and the seven rites</span></a>
+                        <a class="chap md-state" href="#guardians"><span class="n">4</span><b>Guardians</b><span>Sitting Bull, Crazy Horse, Red Cloud, Black Elk</span></a>
+                        <a class="chap md-state" href="#ch-resist"><span class="n">5</span><b>Resistance</b><span>Red Cloud's War, Little Bighorn, Wounded Knee</span></a>
+                        <a class="chap md-state" href="#legends"><span class="n">6</span><b>Legends and lore</b><span>Thunderbird, Iktomi, Deer Woman, the wrestled ghost</span></a>
+                        <a class="chap md-state" href="#ingenuity"><span class="n">7</span><b>Ingenuity</b><span>Tipi, pemmican, sign language, travois and more</span></a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section scheme-dark" id="news" aria-labelledby="news-title">
+                <div class="wrap address">
+                    <div>
+                        <span class="md-eyebrow">Sioux News Today</span>
+                        <h2 class="md-headline-large" id="news-title">Chief Bear Cross: Healing of the World</h2>
+                        <blockquote class="quote" style="margin-top:22px">“We must return to the Vision of the Dream to carry about the Living of Today.”</blockquote>
+                        <p class="md-on-variant" style="margin-top:22px;max-width:58ch">In a powerful address, Chief Bear Cross speaks to the heart of our community's resilience. He outlines the path forward: how the ancient wisdom of the Oceti Sakowin is not just history, but the medicine needed for the modern world. The vision he speaks of is practical. Feed the people, gather the people, teach the children, and the healing follows.</p>
+                        <div class="btn-row"><a class="md-btn tonal has-icon md-state" href="https://www.facebook.com/SacredOnes23/" target="_blank" rel="noopener noreferrer">Follow the message on Facebook <svg aria-hidden="true"><use href="#i-open" /></svg></a></div>
+                    </div>
+                    <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/01/omp4111_Lakota_Sioux_Indian_village_life_teepees_restful_famili_ba39628a-94fb-44d0-a3e9-f7ee2eb5760a-600x600.png" alt="Illustration: silhouettes of a family beside a tipi at sunset" loading="lazy" width="1024" height="1024"></figure>
+                </div>
+            </section>
+
+            <!-- FOUR SOULS OF COYOTE -->
+            <section class="section" id="featured-movie" aria-labelledby="movie-title">
+                <div class="wrap split">
+                    <div>
+                        <span class="md-eyebrow">Recommended film</span>
+                        <h2 class="md-display-small" id="movie-title">Four Souls of Coyote</h2>
+                        <p class="md-body-large md-on-variant md-measure" style="margin-top:18px">This masterpiece beautifully weaves our creation stories with the urgent message of environmental stewardship. A visual journey that honors the spirit of the Coyote and the wisdom of our ancestors. Coyote is the oldest teacher on the Plains: foolish, hungry, brave and funny, and never finished learning. Áron Gauder's animated feature lets him carry a creation story across the centuries to the edge of the world we live in now. We show it to our youth because it says what we say, in a language they already love.</p>
+                        <div class="btn-row"><a class="md-btn filled has-icon md-state" href="https://www.4soulsofcoyote.com/" target="_blank" rel="noopener noreferrer">Visit the official site <svg aria-hidden="true"><use href="#i-open" /></svg></a></div>
+                    </div>
+                    <div class="award-card">
+                        <svg class="wheel" aria-hidden="true"><use href="#wheel" /></svg>
+                        <div class="k">Sacred Ones Award · 2025</div>
+                        <b>Best Cultural Animation Movie</b>
+                        <span class="s">Four Souls of Coyote</span>
+                        <hr>
+                        <span class="md-body-small md-on-variant">Presented by Sacred Ones, Fort Peck Reservation</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DONATE -->
+            <section class="section scheme-bark" id="donate" aria-labelledby="donate-title">
+                <div class="wrap">
+                    <div class="give">
+                        <div>
+                            <span class="md-eyebrow">Donate</span>
+                            <h2 class="md-display-small" id="donate-title">Give them a chance to dream again.</h2>
+                            <p class="md-body-large md-on-variant" style="margin-top:18px">Please contribute to the dreams you see on this site. We wish all these projects to come to life so we can have a chance at a life that was denied us and forced us into a state of imprisonment and hopelessness.</p>
+                            <p class="md-body-large md-on-variant" style="margin-top:12px">Can you join us and help us finally have a chance to dream? Every dollar stays on the reservation: it buys lumber, seed, server racks, regalia and gas money for a dancer. We publish what we build, on this page, so you can watch your gift become something you can stand in front of.</p>
+                            <div class="receipt"><b>$500</b><span class="md-body-medium">For donations over $500 we will send a receipt and our deepest appreciation for your support.</span></div>
+                        </div>
+                        <div class="ways">
+                            <h3 class="md-title-large head">Secure donation options</h3>
+                            <div class="md-list">
+                                <a class="md-list-item md-state" href="https://www.paypal.com/donate?business=sacredones22@gmail.com" target="_blank" rel="noopener noreferrer">
+                                    <span class="md-icon-container tertiary"><svg aria-hidden="true"><use href="#i-heart" /></svg></span>
+                                    <span class="md-li-text"><span class="md-li-head">Donate with PayPal</span><span class="md-li-support">Card or PayPal balance</span></span>
+                                    <span class="md-li-trail"><svg aria-hidden="true"><use href="#i-open" /></svg></span>
+                                </a>
+                                <a class="md-list-item md-state" href="https://cash.app/$sacredonez" target="_blank" rel="noopener noreferrer">
+                                    <span class="md-icon-container"><svg aria-hidden="true"><use href="#i-card" /></svg></span>
+                                    <span class="md-li-text"><span class="md-li-head">Donate with CashApp</span><span class="md-li-support">$sacredonez</span></span>
+                                    <span class="md-li-trail"><svg aria-hidden="true"><use href="#i-open" /></svg></span>
+                                </a>
+                                <div class="md-list-item">
+                                    <span class="md-icon-container secondary"><svg aria-hidden="true"><use href="#i-mail" /></svg></span>
+                                    <span class="md-li-text"><span class="md-li-head">Or mail a check</span><address class="md-li-support">Make payable to <b>Sacred Ones</b><br>2112 4th Avenue W, Suite 103B<br>Williston, ND 58001</address></span>
+                                </div>
+                            </div>
+                            <p class="md-body-small md-on-variant" style="padding:8px 16px 16px">Sacred Ones is a 501(c)(3). All contributions are tax deductible.</p>
+                        </div>
+                        <figure class="photo give-photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/IMG20241014142419-1024x768.jpg" alt="Children watching a jingle dress dancer at a community gathering" loading="lazy" width="2560" height="1920"></figure>
+                    </div>
+                    <div class="wish">
+                        <div>
+                            <h3 class="md-headline-small">Our material wish list</h3>
+                            <p class="md-on-variant" style="margin-top:8px">Can't give money? These things go straight to work. Email <a href="mailto:sacredones22@gmail.com">sacredones22@gmail.com</a> to donate any of them.</p>
+                        </div>
+                        <ul>
+                            <li><svg aria-hidden="true"><use href="#i-tick" /></svg>Laptops for students</li><li><svg aria-hidden="true"><use href="#i-tick" /></svg>Video equipment</li><li><svg aria-hidden="true"><use href="#i-tick" /></svg>Crafting supplies</li>
+                            <li><svg aria-hidden="true"><use href="#i-tick" /></svg>Commercial sewing machines</li><li><svg aria-hidden="true"><use href="#i-tick" /></svg>Plastic storage bins</li><li><svg aria-hidden="true"><use href="#i-tick" /></svg>Office furniture</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISIONARY + JOIN -->
+            <section class="section" id="contact" aria-labelledby="vis-title">
+                <div class="wrap">
+                    <div class="split">
+                        <figure class="photo arch"><img src="https://sacredones.org/wp-content/uploads/2025/05/IMG_20220912_124202-768x768.jpg" alt="Yellow Butterfly Woman, seated and smiling" loading="lazy" width="2560" height="2560"></figure>
+                        <div>
+                            <span class="md-eyebrow">The visionary behind the dream</span>
+                            <h2 class="md-display-small" id="vis-title">Yellow Butterfly Woman</h2>
+                            <blockquote class="soft">Mother to some, guide for many, friend of the heart.</blockquote>
+                            <p class="md-on-variant">Yellow Butterfly Woman is the inspiration behind the dream. She has spent her life listening: to elders, to young people in trouble, to anyone who sat down at her table. Sacred Ones grew out of those conversations, and it keeps her way of working. Nothing is built that the people did not ask for. Please feel free to reach out to seek counsel or healing. We hope this is a new venture that will bear fruit in the days to come.</p>
+                        </div>
+                    </div>
+                    <div class="join">
+                        <div>
+                            <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/omp4111_two_native_american_hands_shaking_symbolic_no_faces_650bb528-5ac0-4c98-b546-5a3d535b8fbf-600x600.png" alt="Illustration: two beaded wrists in a handshake" loading="lazy" width="1024" height="1024"></figure>
+                            <span class="md-eyebrow">Join the movement</span>
+                            <h3 class="md-headline-medium">Volunteer, partner, or just say hello.</h3>
+                            <p class="md-on-variant" style="margin-top:10px">Write to <a href="mailto:sacredones22@gmail.com">sacredones22@gmail.com</a> or find us on social media.</p>
+                            <div class="md-chips">
+                                <a class="md-chip assist md-state" href="https://www.facebook.com/SacredOnes23/" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-fb" /></svg> Facebook</a>
+                                <a class="md-chip assist md-state" href="https://www.instagram.com/sacred.ones/" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-ig" /></svg> Instagram</a>
+                            </div>
+                        </div>
+                        <form class="contact" id="contact-form" novalidate>
+                            <h3 class="md-title-large">Send us a message</h3>
+                            <div class="md-field"><input id="cf-name" placeholder=" " autocomplete="name"><label for="cf-name">Your name</label></div>
+                            <div class="md-field"><input id="cf-email" type="email" placeholder=" " autocomplete="email"><label for="cf-email">Your email</label></div>
+                            <div class="md-field"><textarea id="cf-msg" rows="4" placeholder=" "></textarea><label for="cf-msg">How can we help?</label></div>
+                            <div><button class="md-btn filled has-icon md-state" type="submit"><svg aria-hidden="true"><use href="#i-send" /></svg> Send message</button></div>
+                            <p class="md-body-small md-on-variant">This opens your email app with the message addressed to sacredones22@gmail.com.</p>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- =========================== PROJECTS =========================== -->
+        <div class="view" id="view-projects">
+            <section class="page-head tone-low section" style="padding-top:clamp(28px,4vw,48px)">
+                <div class="wrap">
+                    <a class="md-btn text has-icon md-state" href="#home"><svg aria-hidden="true"><use href="#i-back" /></svg> Back to home</a>
+                    <div class="page-head-in">
+                        <div>
+                            <span class="md-eyebrow">Projects</span>
+                            <h1 class="md-display-medium">Building our future</h1>
+                            <p class="md-body-large md-on-variant">Sovereignty through technology, nature and spirit. Each project restores something our people were denied: land, food, belonging and ceremony.</p>
+                        </div>
+                        <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/06/sacredones-3d-600x600.png" alt="Illustration: a glowing wireframe portrait, the digital future" loading="lazy" width="1024" height="1024"></figure>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="p-ai">
+                <div class="wrap project">
+                    <div>
+                        <span class="md-eyebrow">Economic sovereignty</span>
+                        <h2 class="md-headline-large" id="p-ai">Youth AI jobs training and data center</h2>
+                        <p class="md-body-large md-on-variant" style="margin-top:16px">We are skipping the industrial age and leaping straight into the digital future. By establishing an eco-friendly AI data center on tribal grounds, we use our sovereign status to create a tax-advantaged zone for high-tech infrastructure.</p>
+                        <p class="md-body-large md-on-variant">The first cohort will be local: young people who already fix their cousins' phones and run the sound at powwows. We will train them on the same hardware the industry uses, inside a building their own nation owns.</p>
+                        <p class="md-body-large md-on-variant">This is not just about servers. It is about people. Our training facility will teach our youth, who often face unemployment rates of over 50%, how to manage GPU-based systems (nVidia), code, and lead in the AI revolution. We are turning the "digital divide" into a competitive advantage.</p>
+                        <ul class="ticks"><li><svg aria-hidden="true"><use href="#i-check" /></svg>100% green energy powered</li><li><svg aria-hidden="true"><use href="#i-check" /></svg>Sovereign data protection</li><li><svg aria-hidden="true"><use href="#i-check" /></svg>High-wage local jobs</li></ul>
+                        <a class="md-btn filled md-state" href="#donate">Help build this</a>
+                    </div>
+                    <div class="stat-col">
+                        <div class="stat"><b>50%+</b><p>Unemployment our youth often face. The training center exists to change that number.</p></div>
+                        <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/06/3d-teepee-600x600.png" alt="Illustration: a tipi drawn in glowing wireframe" loading="lazy" width="1024" height="1024"></figure>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section tone-low" aria-labelledby="p-more">
+                <div class="wrap">
+                    <div class="section-head"><span class="md-eyebrow">More of the dream</span><h2 class="md-headline-large" id="p-more">Land, food and ceremony</h2></div>
+                    <div class="proj-cards">
+                        <article class="proj-card">
+                            <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/omp4111_Beautiful_tranquil_Sioux_Nation_amusement_park_with_nat_169e9f60-2841-4d78-8285-ce6930e73501-600x600.png" alt="Concept illustration of the ancestral park: tipis beside a quiet pond" loading="lazy" width="1024" height="1024"></figure>
+                            <div class="body"><h3 class="md-title-large">Ancestral park</h3><p>A nature-based space for healing and recreation. No neon lights, just woods, storytelling and traditional games. Picture a creek-side camp of lodges, a hand-game arbor, horse trails, and an elder at the fire every evening. Families will book it the way others book a resort, and the money stays home.</p></div>
+                        </article>
+                        <article class="proj-card">
+                            <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/omp4111_beautiful_Sioux_people_in_1800s_in_teepees_buffalo_in_b_7d885be3-1946-412e-abe1-879861d65462-600x600.png" alt="Illustration: a woman at a sunset camp with buffalo on the horizon" loading="lazy" width="1024" height="1024"></figure>
+                            <div class="body"><h3 class="md-title-large">Bison release</h3><p>The return of the Tatanka restores our prairie ecosystem and gives us food sovereignty. A starter herd, fenced range, a hay reserve for the hard winters, and a plan to put buffalo meat in school lunches and elder meals.</p></div>
+                        </article>
+                        <article class="proj-card">
+                            <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/01/FB_IMG_1736185794162-600x750.jpg" alt="Two jingle dress dancers in an arena" loading="lazy" width="1080" height="1350"></figure>
+                            <div class="body"><h3 class="md-title-large">Living culture</h3><p>Jingle dress and drum, kept alive by our people. Regalia sewing circles, a youth drum group, language nights, and travel support so our dancers can enter the circle wherever it forms.</p><a class="md-btn text md-state" href="#living-culture" style="margin-top:8px">See living culture</a></div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- =========================== CULTURE =========================== -->
+        <div class="view" id="view-culture">
+            <section class="page-head tone-low section" style="padding-top:clamp(28px,4vw,48px)">
+                <div class="wrap">
+                    <a class="md-btn text has-icon md-state" href="#home"><svg aria-hidden="true"><use href="#i-back" /></svg> Back to home</a>
+                    <div class="page-head-in">
+                        <div>
+                            <span class="md-eyebrow">Culture</span>
+                            <h1 class="md-display-medium">The Oceti Sakowin archive</h1>
+                            <p class="md-body-large md-on-variant">History, cosmology and resistance in seven chapters.</p>
+                        </div>
+                        <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/05/Screenshot-2025-05-23-at-16.59.16-768x480.png" alt="Archival photograph of a tipi camp on the plains" loading="lazy" width="2146" height="1340"></figure>
+                    </div>
+                </div>
+            </section>
+            <nav class="md-tabs culture-tabs" id="culture-tabs" aria-label="Archive chapters">
+                <a class="md-tab md-state" href="#ch-intro" data-ch="ch-intro">Identity</a>
+                <a class="md-tab md-state" href="#ch-cosmos" data-ch="ch-cosmos">Cosmology</a>
+                <a class="md-tab md-state" href="#ch-covenant" data-ch="ch-covenant">Sacred covenant</a>
+                <a class="md-tab md-state" href="#guardians" data-ch="guardians">Guardians</a>
+                <a class="md-tab md-state" href="#ch-resist" data-ch="ch-resist">Resistance</a>
+                <a class="md-tab md-state" href="#legends" data-ch="legends">Legends</a>
+                <a class="md-tab md-state" href="#ingenuity" data-ch="ingenuity">Ingenuity</a>
+            </nav>
+
+            <section class="chapter" id="ch-intro">
+                <div class="wrap">
+                    <div class="ch-head">
+                        <div><span class="num">Chapter 1</span><h2 class="md-headline-large">Identity and nomenclature</h2><p class="md-on-variant" style="margin-top:12px">The imperative of accurate naming.</p></div>
+                        <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/01/omp4111_as_an_illustrative_sketch_painting_as_a_beautiful_Sioux_7553092a-f971-48ff-b63f-7d45480d4c58-768x384.png" alt="Painterly illustration of a woman beside a tipi under a wide sky" loading="lazy" width="1536" height="768"></figure>
+                    </div>
+                    <p class="ch-intro md-body-large">Names are the first thing a colonizer changes and the last thing a people get back. This chapter begins the archive where our grandparents would have begun it: by saying who we are, in our own words, and naming the seven fires that make one nation.</p>
+                    <p class="lesson-link"><a class="md-btn tonal has-icon md-state" href="lessons/01-identity.html"><svg aria-hidden="true"><use href="#i-school" /></svg> Open the full lesson</a></p>
+                    <div class="two">
+                        <p class="md-on-variant">The primary objective of this archive is to dismantle colonial terminologies. The term "Sioux" is an exonym, a French abbreviation of the Ojibwe word <em>Nadouessioux</em>, meaning "little snakes" or "foreign speakers." To populate the archive with cultural integrity, we prioritize the endonym <em>Oceti Sakowin</em> (People of the Seven Council Fires).</p>
+                        <p class="md-on-variant">This name references the ancient practice where the seven constituent bands would convene, each bringing coals to kindle a central, collective council fire. It symbolizes the unity of the diverse bands into a single sovereign entity.</p>
+                    </div>
+                    <h3 class="md-headline-small" style="margin:44px 0 16px">The seven council fires</h3>
+                    <div class="fires">
+                        <div class="fire"><h4>Dakota (Eastern)</h4><ul>
+                            <li><b>Mdewakanton</b><span>Dwellers by the Sacred Lake</span></li><li><b>Wahpekute</b><span>Shooters Among the Leaves</span></li>
+                            <li><b>Wahpeton</b><span>Dwellers Among the Leaves</span></li><li><b>Sisseton</b><span>Dwellers of the Fish Ground</span></li></ul></div>
+                        <div class="fire"><h4>Nakota (Central)</h4><ul>
+                            <li><b>Yankton</b><span>Dwellers at the End</span></li><li><b>Yanktonai</b><span>Little Dwellers at the End</span></li></ul></div>
+                        <div class="fire"><h4>Lakota (Western)</h4><ul>
+                            <li><b>Teton</b><span>Dwellers of the Plains</span></li><li><em>Includes Oglala, Hunkpapa, Sicangu, and more.</em></li></ul></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter scheme-moss" id="ch-cosmos">
+                <div class="wrap">
+                    <div class="ch-head plain"><div><span class="num">Chapter 2</span><h2 class="md-headline-large">Origins of the universe</h2></div></div>
+                    <p class="ch-intro md-body-large">Before there were people there was a story about how everything is related. Our cosmology is not a museum piece. It is the reason we call the buffalo a relative, the reason a stone can be prayed with, and the reason the land cannot be sold.</p>
+                    <p class="lesson-link"><a class="md-btn tonal has-icon md-state" href="lessons/02-cosmology.html"><svg aria-hidden="true"><use href="#i-school" /></svg> Open the full lesson</a></p>
+                    <div class="two">
+                        <div>
+                            <h3 class="md-headline-medium" style="margin-bottom:12px">Wakan Tanka</h3>
+                            <p class="md-on-variant">Often translated as "The Great Spirit," a more nuanced translation is "The Great Mystery." Wakan Tanka is not a monotheistic god but the supreme creative power and unifying force of the universe. In Lakota cosmology, all things (humans, animals, stones, trees) are imbued with <em>Nagila</em> (divine essence) and are therefore "relatives" (<em>Mitakuye Oyasin</em>).</p>
+                        </div>
+                        <div style="display:grid;gap:14px">
+                            <div class="creation"><h3 class="md-title-large" style="margin-bottom:8px">First creation: the Rock</h3><p class="md-on-variant">In the beginning was the Void (Han). Wakan Tanka sent his spirit to manifest as <b>Inyan (The Rock)</b>. From his own blood, Inyan created Maka (Earth) and Skan (Sky). These primordial entities created Wi (Sun) to bring light.</p></div>
+                            <div class="creation"><h3 class="md-title-large" style="margin-bottom:8px">Second creation: the flood</h3><p class="md-on-variant">The Creator cleansed the world with a flood. Only Kangi (Crow) survived. The Creator sent diving animals to find mud. The Loon, Otter and Beaver failed. Finally, the humble <b>Turtle (Keya)</b> succeeded. The mud was spread on the Turtle's back to form <b>Turtle Island</b> (North America).</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch-covenant">
+                <div class="wrap">
+                    <div class="ch-head plain"><div><span class="num">Chapter 3</span><h2 class="md-headline-large">The sacred covenant: the pipe and seven rites</h2></div></div>
+                    <p class="ch-intro md-body-large">A gift came to the people when they were hungry and divided: a pipe, seven ways to pray, and a promise. Every ceremony we hold today, from a baby naming to a Sun Dance, traces back to the woman who brought it.</p>
+                    <p class="lesson-link"><a class="md-btn tonal has-icon md-state" href="lessons/03-covenant.html"><svg aria-hidden="true"><use href="#i-school" /></svg> Open the full lesson</a></p>
+                    <div class="callout">
+                        <div>
+                            <h3 class="md-headline-small" style="margin-bottom:10px">White Buffalo Calf Woman</h3>
+                            <p class="md-on-variant">The pivotal moment in Sioux spiritual history. She appeared to two scouts: one lustful (who was destroyed), one righteous. She presented the <b>Chanunpa (Sacred Pipe)</b> to the people, teaching that as long as they held the pipe sacred, they would prosper. Upon leaving, she transformed into a white buffalo calf, promising to return.</p>
+                        </div>
+                        <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/01/omp4111_as_the_face_on_an_Indian_Nickle_coin._8ba34fc7-151e-43de-a705-1d0571b60b94-300x300.png" alt="Painterly portrait of a woman in a feathered headdress" loading="lazy" width="1024" height="1024"></figure>
+                    </div>
+                    <dl class="rites">
+                        <div><dt>Keeping of the soul</dt><dd>Honoring the spirit of the deceased for a year before releasing them to the Spirit Path.</dd></div>
+                        <div><dt>The purification (Inipi)</dt><dd>The sweat lodge. Renewal and rebirth inside the womb of Mother Earth using heated stones.</dd></div>
+                        <div><dt>Vision quest</dt><dd>Hanbleceyapi. Solitary prayer and fasting on a high place to receive spiritual direction.</dd></div>
+                        <div><dt>The Sun Dance</dt><dd>Wiwanyang Wacipi. A communal ceremony of world renewal and personal sacrifice for the people.</dd></div>
+                        <div><dt>Making relatives</dt><dd>Hunkapi. Creating kinship bonds stronger than blood through the sharing of the pipe.</dd></div>
+                        <div><dt>Coming of age</dt><dd>Honoring a young woman's first menstruation and her powerful life-giving force.</dd></div>
+                        <div><dt>Throwing the ball</dt><dd>A ritual game symbolizing the grasping of sacred knowledge from the four directions.</dd></div>
+                    </dl>
+                </div>
+            </section>
+
+            <section class="chapter tone-low" id="guardians">
+                <div class="wrap">
+                    <div class="ch-head plain"><div><span class="num">Chapter 4</span><h2 class="md-headline-large">Guardians of the people</h2><p class="md-on-variant" style="margin-top:12px">Select a leader to read their story.</p></div></div>
+                    <p class="ch-intro md-body-large">These four were not kings. They were chosen, again and again, by people who could have walked away. Each biography opens in its own window; read them in any order, and notice how often the word "people" appears before the word "I".</p>
+                    <p class="lesson-link"><a class="md-btn tonal has-icon md-state" href="lessons/04-guardians.html"><svg aria-hidden="true"><use href="#i-school" /></svg> Open the full lesson</a></p>
+                    <div class="story-grid" id="g-cards"></div>
+                </div>
+            </section>
+
+            <section class="chapter scheme-dark" id="ch-resist">
+                <div class="wrap resist">
+                    <div>
+                        <div class="ch-head plain" style="margin-bottom:32px"><div><span class="num">Chapter 5</span><h2 class="md-headline-large">Wars for sovereignty</h2></div></div>
+                    <p class="ch-intro md-body-large">Three dates every child here learns. One we won outright, one we won on the field and lost in the papers, one we did not survive. Told together they explain why sovereignty is not an abstraction to us.</p>
+                    <p class="lesson-link"><a class="md-btn tonal has-icon md-state" href="lessons/05-resistance.html"><svg aria-hidden="true"><use href="#i-school" /></svg> Open the full lesson</a></p>
+                        <ol class="timeline">
+                            <li><span class="yr">1866 – 1868</span><h3 class="md-title-large">Red Cloud's War</h3><p>The only war the US ever lost to a Native nation. Red Cloud besieged the Bozeman Trail forts, forcing the US to abandon them and sign the 1868 Fort Laramie Treaty, guaranteeing the Black Hills to the Sioux.</p></li>
+                            <li><span class="yr">1876</span><h3 class="md-title-large">Battle of the Little Bighorn</h3><p>Triggered by the Black Hills gold rush. A massive camp of Lakota and Cheyenne, led by Crazy Horse and Gall and spiritually guided by Sitting Bull, wiped out Custer's 7th Cavalry. It was a desperate defense of family, not a massacre.</p></li>
+                            <li><span class="yr">1890</span><h3 class="md-title-large">Wounded Knee</h3><p>The final tragedy. US troops, fearing the pacifist Ghost Dance movement, massacred hundreds of disarmed men, women and children. It marked the end of armed resistance.</p></li>
+                        </ol>
+                    </div>
+                    <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/omp4111_realistic_4k_image_of_Native_American_Sioux_Warriors_on_69ab475a-ee08-4983-a05f-a2b872bf8dbd-600x600.png" alt="Illustration: riders on horseback silhouetted against a prairie sunset" loading="lazy" width="1024" height="1024"></figure>
+                </div>
+            </section>
+
+            <section class="chapter" id="legends">
+                <div class="wrap">
+                    <div class="ch-head plain"><div><span class="num">Chapter 6</span><h2 class="md-headline-large">Sacred legends and lore</h2></div></div>
+                    <p class="ch-intro md-body-large">Trickster, thunder, serpent and ghost. These stories were told in winter, when the snakes were asleep and could not overhear. They carry the ethics of the nation inside a good laugh or a good scare.</p>
+                    <p class="lesson-link"><a class="md-btn tonal has-icon md-state" href="lessons/06-legends.html"><svg aria-hidden="true"><use href="#i-school" /></svg> Open the full lesson</a></p>
+                    <div class="feature">
+                        <div>
+                            <span class="md-eyebrow">Featured legend</span>
+                            <h3 class="md-headline-small">Ghosts in Sioux traditions</h3>
+                            <p class="md-on-variant" style="margin-top:12px">The Sioux have a rich tradition of stories surrounding spirits (<em>Wanagi</em>). One famous account tells of a warrior who wrestled a ghost throughout the night, a test of bravery against the supernatural. These stories emphasize that the spirit world is always close at hand.</p>
+                            <div class="btn-row"><a class="md-btn filled tertiary has-icon md-state" href="https://www.worldhistory.org/article/2314/the-man-who-wrestled-with-a-ghost/" target="_blank" rel="noopener noreferrer">Read "The Man Who Wrestled with a Ghost" <svg aria-hidden="true"><use href="#i-open" /></svg></a></div>
+                        </div>
+                        <figure class="photo"><img src="https://sacredones.org/wp-content/uploads/2025/03/sunset-600x300.png" alt="Illustration: riders at dusk on the prairie" loading="lazy" width="600" height="300"></figure>
+                    </div>
+                    <div class="story-grid wide" id="l-cards"></div>
+                </div>
+            </section>
+
+            <section class="chapter tone-low" id="ingenuity">
+                <div class="wrap inv-wrap">
+                    <div>
+                        <div class="ch-head plain"><div><span class="num">Chapter 7</span><h2 class="md-headline-large">Indigenous ingenuity</h2><p class="md-on-variant" style="margin-top:12px">Eight technologies of the Plains.</p></div></div>
+                    <p class="ch-intro md-body-large">Long before "sustainable" was a word, our ancestors engineered a portable, zero-waste civilization on the open plains. This is the chapter we point our data-center students to first.</p>
+                    <p class="lesson-link"><a class="md-btn tonal has-icon md-state" href="lessons/07-ingenuity.html"><svg aria-hidden="true"><use href="#i-school" /></svg> Open the full lesson</a></p>
+                        <ol class="inv" id="inv-list"></ol>
+                        <div class="btn-row"><a class="md-btn filled md-state" href="#donate">Return to the donation page</a></div>
+                    </div>
+                    <figure class="photo" style="position:sticky;top:140px"><img src="https://sacredones.org/wp-content/uploads/2025/05/Screenshot-2025-05-23-at-16.59.32-600x607.png" alt="Archival photograph of a tipi camp" loading="lazy" width="1972" height="1996"><figcaption class="sr-only">Archival photograph</figcaption></figure>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="foot scheme-dark">
+        <div class="md-bead" aria-hidden="true"></div>
+        <div class="wrap">
+            <div class="foot-in">
+                <div>
+                    <a class="md-brand" href="#home"><img src="assets/logo-emblem-small.jpg" alt="" width="36" height="36"> Sacred Ones</a>
+                    <p class="md-on-variant" style="margin-top:14px;max-width:32ch">Empowering our spiritual community together. A brighter tomorrow, together.</p>
+                </div>
+                <div>
+                    <h4 class="md-title-medium">Contact</h4>
+                    <ul>
+                        <li><a href="mailto:sacredones22@gmail.com">sacredones22@gmail.com</a></li>
+                        <li class="md-on-variant" style="min-height:40px;display:flex;align-items:center">2112 4th Avenue W, Suite 103B, Williston, ND 58001</li>
+                        <li><a href="store/store.html">Visit the store</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="md-title-medium">Follow us</h4>
+                    <ul>
+                        <li><a href="https://www.facebook.com/SacredOnes23/" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+                        <li><a href="https://www.instagram.com/sacred.ones/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                        <li><a href="https://www.sacredones.org/SacredAdventures/SacredOnes.html" target="_blank" rel="noopener noreferrer">Sacred Adventures</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="small md-body-small"><span>&copy; <span id="yr">2025</span> Sacred Ones · 501(c)(3) nonprofit</span><span>Heal. Educate. Protect. Empower.</span></div>
+        </div>
+    </footer>
+
+    <!-- story dialog -->
+    <dialog class="md-dialog" id="story-dialog" aria-labelledby="sd-name">
+        <div class="sd">
+            <div class="sd-img"><img id="sd-img" src="" alt=""></div>
+            <div class="sd-body">
+                <p class="native md-label-large" id="sd-native"></p>
+                <h2 class="md-headline-medium" id="sd-name" style="margin-right:48px"></h2>
+                <p class="meta md-body-medium" id="sd-meta"></p>
+                <p class="aspire md-body-medium" id="sd-aspire" hidden></p>
+                <div class="md-body-medium" id="sd-content"></div>
+                <blockquote id="sd-quote"></blockquote>
+                <div class="md-dialog-actions"><button class="md-btn text md-state" id="sd-close" type="button">Close</button></div>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="md-dialog" id="photo-dialog" aria-label="Event photo" style="width:min(1100px,96vw)">
+        <img id="photo-big" src="" alt="" style="width:100%;max-height:82vh;object-fit:contain;background:#15110e">
+        <div class="md-dialog-actions" style="padding:8px 16px 12px"><button class="md-btn text md-state" id="photo-close" type="button">Close</button></div>
+    </dialog>
+
+    <!-- chat helper -->
+    <button class="md-fab chat-fab md-state" id="chat-fab" type="button" aria-label="Chat with the Sacred Ones helper" aria-expanded="false" aria-controls="chat">
+        <svg aria-hidden="true"><use href="#i-chat" /></svg>
+    </button>
+    <section class="chat" id="chat" aria-label="Sacred Ones helper chat">
+        <div class="chat-top">
+            <img src="https://sacredones.org/wp-content/uploads/2025/05/cropped-Example.png" alt="" onerror="this.src='assets/logo-emblem-small.jpg'">
+            <div><b class="md-title-medium">Sacred Ones helper</b><small>Keeper of Knowledge</small></div>
+            <button class="md-icon-btn md-state" type="button" id="chat-reset" aria-label="Restart conversation"><svg aria-hidden="true"><use href="#i-refresh" /></svg></button>
+            <button class="md-icon-btn md-state" type="button" id="chat-close" aria-label="Close chat"><svg aria-hidden="true"><use href="#i-close" /></svg></button>
+        </div>
+        <div class="chat-msgs" id="chat-msgs" aria-live="polite"></div>
+        <div id="chat-chips"></div>
+        <form id="chat-form"><label class="sr-only" for="chat-input">Type a message</label><input id="chat-input" placeholder="Type a message" autocomplete="off"><button class="md-icon-btn filled md-state" type="submit" aria-label="Send"><svg aria-hidden="true"><use href="#i-send" /></svg></button></form>
+    </section>
+
+    <script src="m3.js"></script>
+    <script>
+        const U = 'https://sacredones.org/wp-content/uploads/';
+        const GUARDIANS = [
+            { name: "Sitting Bull", native: "Tȟatȟáŋka Íyotake", title: "Hunkpapa Holy Man and War Chief", dates: "c. 1831 – 1890", thumb: U + "2025/01/FB_IMG_1612417976260-600x821.jpg", image: U + "2025/01/FB_IMG_1612417976260.jpg", aspiration: "Absolute sovereignty and preservation of the sacred ways.", quote: "If we must die, we die defending our rights.", content: "<p>Sitting Bull was the paramount symbol of indigenous resistance. As a <em>Wichasha Wakan</em> (Holy Man), his authority stemmed from spiritual insight. In June 1876, he held a Sun Dance where he foresaw soldiers 'falling into camp like grasshoppers', a prophecy fulfilled at Little Bighorn.</p><p>He led his people into exile in Canada rather than surrender, but the extermination of the buffalo forced his return in 1881. He later toured with Buffalo Bill's Wild West Show, earning money for his people while remaining a fierce critic of settler society. He was assassinated in 1890 by Indian Agency police.</p>" },
+            { name: "Crazy Horse", native: "Tȟašúŋke Witkó", title: "Oglala War Leader", dates: "c. 1840 – 1877", image: "assets/commons/crazy-horse-memorial.jpg", aspiration: "To live purely by the old ways.", quote: "One does not sell the earth upon which the people walk.", content: "<p>The archetype of the ascetic warrior, Crazy Horse famously refused to wear elaborate regalia or be photographed. His name came from a vision of a horse floating in the spirit world. He was a military genius, acting as the decoy in the Fetterman Massacre and leading the flank at Little Bighorn.</p><p>He surrendered in 1877 solely to save his people from starvation. He was bayoneted to death at Fort Robinson while resisting imprisonment. His final resting place remains a secret.</p>" },
+            { name: "Red Cloud", native: "Maȟpíya Lúta", title: "Oglala Chief and Statesman", dates: "1822 – 1909", image: "assets/commons/red-cloud.jpg", aspiration: "Peace through strength and diplomacy.", quote: "They made us many promises, more than I can remember...", content: "<p>Red Cloud is unique as the only Native leader to win a war against the US on his terms. During Red Cloud's War (1866-1868), he besieged the Bozeman Trail forts, forcing the US to abandon them and sign the 1868 Fort Laramie Treaty. Recognizing the vast numbers of settlers, he later transitioned to diplomacy, fighting for his people's rights in Washington D.C.</p>" },
+            { name: "Black Elk", native: "Heȟáka Sápa", title: "Oglala Holy Man", dates: "1863 – 1950", image: "assets/commons/black-elk.jpg", aspiration: "To restore the 'Sacred Hoop'.", quote: "The power of the world always works in circles.", content: "<p>A second cousin to Crazy Horse, Black Elk witnessed the Battle of the Little Bighorn as a boy. His legacy is the preservation of spiritual knowledge through <em>Black Elk Speaks</em>. He carried a Great Vision of the 'Sacred Hoop' of the nation being broken and the necessity of restoring it for the flourishing of all people.</p>" }
+        ];
+        // Legend art: the owner's own illustrations from sacredones.org (evocative, not literal)
+        const LEGENDS = [
+            { name: "Thunderbird", native: "Wakíŋyaŋ", title: "Legendary creature", subtitle: "Guardian of truth", thumb: U + "2025/01/omp4111_imagine_its_1800_in_South_Dakota._This_is_an_illustrati_70f72ea1-1189-43bd-bf28-be5da1c8c32c-300x300.png", image: U + "2025/01/omp4111_imagine_its_1800_in_South_Dakota._This_is_an_illustrati_70f72ea1-1189-43bd-bf28-be5da1c8c32c-600x600.png", quote: "The thunder is their voice.", content: "<p>The <strong>Wakinyan</strong> are giant eagles that create thunder with their wings and lightning with their eyes. Guardians of truth, they fight the underwater monsters (Unktehi) to protect the people from chaos and floods. Those who dream of them often become <em>Heyoka</em> (sacred clowns).</p>" },
+            { name: "Unktehi", native: "Unktehi", title: "Legendary creature", subtitle: "The horned serpent", thumb: U + "2025/03/omp4111_luxury_sioux_nation_amusement_park_with_authentic_india_23acc988-eada-47d6-bd7b-16c4fdbc6de5-300x300.png", image: U + "2025/03/omp4111_luxury_sioux_nation_amusement_park_with_authentic_india_23acc988-eada-47d6-bd7b-16c4fdbc6de5-600x300.png", quote: "Primal force of the deep.", content: "<p>Horned underwater serpents representing chaos and the powers of the deep earth. Their eternal conflict with the Thunderbirds maintains the balance of the world.</p>" },
+            { name: "Iktomi and the Muskrat", native: "Iktómi", title: "Folklore", subtitle: "The trickster", thumb: U + "2025/03/omp4111_this_color_scheme_with_a_Sioux_Indian_Native_Bed_and_Br_f693d062-cf24-427f-a8c9-5d14d8eda723-300x300.png", image: U + "2025/03/omp4111_this_color_scheme_with_a_Sioux_Indian_Native_Bed_and_Br_f693d062-cf24-427f-a8c9-5d14d8eda723-600x300.png", quote: "He learns the hard way.", content: "<p>Iktomi is the Spider-man trickster. In this tale, he tries to trick the muskrat but ends up outsmarting himself, losing his meal to his own arrogance. These stories teach humility and the consequences of greed.</p>" },
+            { name: "Deer Woman", native: "Anukite", title: "Legendary spirit", subtitle: "The temptress", thumb: U + "2025/01/omp4111_imagine_its_1800_in_South_Dakota._This_is_an_illustrati_3bfd2333-ade4-40d1-add6-68554d87fffb-300x300.png", image: U + "2025/01/omp4111_imagine_its_1800_in_South_Dakota._This_is_an_illustrati_3bfd2333-ade4-40d1-add6-68554d87fffb-600x600.png", quote: "Beware the hoof.", content: "<p>A spirit appearing as a beautiful woman but with deer hooves. She lures men away from their social duties. She represents the dangers of lust and abandoning one's responsibilities.</p>" },
+            { name: "Resuscitation of the Daughter", native: "Wanagi", title: "Folklore", subtitle: "Power of the pipe", thumb: U + "2025/03/omp4111_realistic_4k_image_of_Native_American_Sioux_Warriors_on_79550727-a0b1-4b9d-b107-4c5581ff57ac-300x300.png", image: U + "2025/03/omp4111_realistic_4k_image_of_Native_American_Sioux_Warriors_on_79550727-a0b1-4b9d-b107-4c5581ff57ac-600x300.png", quote: "Breath restored.", content: "<p>A legend highlighting the power of the Wakan men. A chief's daughter dies, but a medicine man, using the sacred pipe and specific songs, calls her spirit back from the path to the afterlife, restoring her breath.</p>" },
+            { name: "Wrestling the Ghost", native: "Wanagi", title: "Folklore", subtitle: "A warrior's test", thumb: U + "2025/05/Screenshot-2025-05-23-at-16.59.16-300x300.png", image: U + "2025/05/Screenshot-2025-05-23-at-16.59.16-768x480.png", quote: "Dawn breaks the hold.", content: "<p>A warrior wrestles a ghost all night long. At dawn, the ghost pleads for release. The warrior agrees in exchange for a blessing. This underscores the bravery required to face the supernatural.</p>" }
+        ];
+        const INVENTIONS = [
+            ["Tipis", "Ingenious conical tent design using buffalo hide and lodgepole pine. Aerodynamic and portable."],
+            ["Pemmican", "The ultimate survival ration. High-energy dried bison meat mixed with fat and berries."],
+            ["Sign language", "PISL was a sophisticated lingua franca allowing diverse tribes to communicate fluently."],
+            ["Travois", "A transport device of poles lashed to a dog or horse to carry heavy loads without wheels."],
+            ["Parfleche", "Waterproof rawhide containers used for storage, the 'suitcases' of the Plains."],
+            ["Snowshoes", "Essential for winter hunting and warfare in deep snow."],
+            ["Herbal medicine", "Extensive pharmacopeia including willow bark (aspirin) and echinacea."],
+            ["Camouflage", "Advanced hunting techniques including wolf skins to approach buffalo herds."]
+        ];
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // ================= CARDS =================
+        function storyCard(item, kind) {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'story md-state';
+            b.setAttribute('aria-label', `Read about ${item.name}`);
+            b.innerHTML = `<img src="${esc(item.thumb || item.image)}" alt="" loading="lazy"><span class="cap"><b>${esc(item.name)}</b><span>${esc(kind === 'g' ? item.title : item.subtitle)}</span></span>`;
+            b.querySelector('img').addEventListener('error', e => { e.target.remove(); b.querySelector('.cap').classList.add('plain'); });
+            b.addEventListener('click', () => openStory(item, b));
+            return b;
+        }
+        GUARDIANS.forEach(g => $('#g-cards').appendChild(storyCard(g, 'g')));
+        LEGENDS.forEach(l => $('#l-cards').appendChild(storyCard(l, 'l')));
+        $('#inv-list').innerHTML = INVENTIONS.map(([n, d]) => `<li><div><h3 class="md-title-medium">${esc(n)}</h3><p class="md-body-medium">${esc(d)}</p></div></li>`).join('');
+        $('#yr').textContent = new Date().getFullYear();
+
+        // ================= GALLERY =================
+        const EVENT = [['02', 'Children and volunteers lined up in front of a bounce house', 'w2 h2'], ['01', 'A girl choosing a bike from the giveaway row', ''], ['16', 'Two volunteers in Sacred Ones shirts', 'h2'], ['10', 'Bounce house with a slide', ''], ['11', 'Volunteers at the supply tables', ''], ['12', 'Volunteers in bright shirts handing out items', 'w2'], ['14', 'A row of new bikes beside the bounce houses', 'w2'], ['15', 'Three smiling volunteers under the trees', ''], ['09', 'Families gathering near the bounce houses', 'w2']];
+        $('#gallery-grid').innerHTML = EVENT.map(([n, alt, cls], i) => `<li class="${cls}"><button type="button" class="md-state" data-n="${n}" aria-label="Open photo: ${esc(alt)}"><img src="assets/events/2026-05-30/event-${n}.jpg" alt="${esc(alt)}"${i > 3 ? ' loading="lazy"' : ''}></button></li>`).join('');
+        const pd = $('#photo-dialog');
+        $('#gallery-grid').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const i = b.querySelector('img'); $('#photo-big').src = i.src; $('#photo-big').alt = i.alt; pd.showModal(); });
+        $('#photo-close').addEventListener('click', () => md.closeDialog(pd));
+
+        // ================= STORY DIALOG =================
+        const sd = $('#story-dialog'); let sdOpener = null;
+        function openStory(d, opener) {
+            sdOpener = opener;
+            const img = $('#sd-img'); img.src = d.image; img.alt = d.name; img.parentElement.style.display = '';
+            img.onerror = () => { img.parentElement.style.display = 'none'; };
+            $('#sd-native').textContent = d.native || '';
+            $('#sd-name').textContent = d.name;
+            $('#sd-meta').textContent = [d.title, d.dates].filter(Boolean).join('  ·  ');
+            const a = $('#sd-aspire'); a.hidden = !d.aspiration; a.textContent = d.aspiration ? 'Aspiration: ' + d.aspiration : '';
+            $('#sd-content').innerHTML = d.content;
+            $('#sd-quote').textContent = '“' + d.quote + '”';
+            sd.showModal(); sd.scrollTop = 0;
+        }
+        $('#sd-close').addEventListener('click', () => md.closeDialog(sd));
+        sd.addEventListener('close', () => sdOpener && sdOpener.focus());
+
+        // ================= NAV: app bar, menus, modal drawer =================
+        md.bindAppBar($('#app-bar'));
+        const menu = $('#menu'), burger = $('#burger'), scrim = $('#scrim');
+        const isDrawer = () => matchMedia('(max-width: 1020px)').matches;
+        function setDrawer(open) {
+            menu.classList.toggle('open', open); scrim.classList.toggle('show', open && isDrawer());
+            burger.setAttribute('aria-expanded', open);
+            if (open && isDrawer()) menu.querySelector('a, button').focus();
+        }
+        burger.addEventListener('click', () => setDrawer(!menu.classList.contains('open')));
+        $('#drawer-close').addEventListener('click', () => { setDrawer(false); burger.focus(); });
+        scrim.addEventListener('click', () => setDrawer(false));
+        function closeDrops() { $$('.md-menu.open').forEach(d => d.classList.remove('open')); $$('[data-drop]').forEach(b => b.setAttribute('aria-expanded', 'false')); }
+        $$('[data-drop]').forEach(btn => btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const d = document.getElementById(btn.dataset.drop), was = d.classList.contains('open');
+            closeDrops();
+            if (!was) { d.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+        }));
+        document.addEventListener('click', e => { if (!e.target.closest('.md-menu-wrap')) closeDrops(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrops(); if (menu.classList.contains('open')) { setDrawer(false); burger.focus(); } } });
+
+        // ================= ROUTER =================
+        const VIEWS = ['home', 'projects', 'culture'];
+        const HOME_ANCHORS = ['about', 'our-game', 'seven', 'projects-home', 'park', 'living-culture', 'archive-home', 'gallery', 'game-section', 'news', 'featured-movie', 'donate', 'contact'];
+        const CULTURE_ANCHORS = ['guardians', 'legends', 'ingenuity', 'ch-intro', 'ch-cosmos', 'ch-covenant', 'ch-resist'];
+        let currentView = null;
+        function show(view, anchor) {
+            const changed = view !== currentView;
+            VIEWS.forEach(v => { const el = document.getElementById('view-' + v); el.classList.toggle('active', v === view); if (changed && v === view) { el.classList.remove('md-fade-through'); void el.offsetWidth; el.classList.add('md-fade-through'); } });
+            currentView = view;
+            closeDrops(); setDrawer(false);
+            $$('.nav-item').forEach(n => n.classList.remove('active'));
+            const el = anchor && document.getElementById(anchor);
+            if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: reduceMotion || changed ? 'auto' : 'smooth', block: 'start' }));
+            else window.scrollTo(0, 0);
+            document.title = { home: 'Sacred Ones — Give Them a Chance to Dream Again', projects: 'Our projects — Sacred Ones', culture: 'The Oceti Sakowin archive — Sacred Ones' }[view];
+        }
+        function route() {
+            const h = decodeURIComponent(location.hash.slice(1));
+            if (!h || h === 'home') return show('home');
+            if (h === 'projects') return show('projects');
+            if (h === 'culture') return show('culture');
+            if (HOME_ANCHORS.includes(h)) return show('home', h);
+            if (CULTURE_ANCHORS.includes(h)) return show('culture', h);
+            show('home');
+        }
+        window.addEventListener('hashchange', route);
+        route();
+
+        // ================= CULTURE TABS: scroll-spy =================
+        const tabs = $$('.md-tab');
+        function setTab(id) {
+            tabs.forEach(t => { const on = t.dataset.ch === id; t.setAttribute('aria-current', on ? 'true' : 'false'); if (on) { const bar = $('#culture-tabs'); const l = t.offsetLeft - 16; if (bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: l, behavior: reduceMotion ? 'auto' : 'smooth' }); } });
+        }
+        if ('IntersectionObserver' in window) {
+            const io = new IntersectionObserver(entries => { entries.forEach(en => { if (en.isIntersecting) setTab(en.target.id); }); }, { rootMargin: '-35% 0px -60% 0px' });
+            $$('.chapter').forEach(c => io.observe(c));
+        }
+        setTab('ch-intro');
+
+        // ================= GAME =================
+        const GAME_URL = 'https://www.sacredones.org/SacredAdventures/SacredOnes.html';
+        $('#game-cover').addEventListener('click', () => {
+            const frame = $('#game-view');
+            const f = document.createElement('iframe');
+            f.src = GAME_URL; f.title = 'Sacred Adventures game'; f.allow = 'autoplay; fullscreen; gyroscope; accelerometer; web-share'; f.allowFullscreen = true;
+            frame.appendChild(f);
+            const c = $('#game-cover'); c.style.opacity = 0; setTimeout(() => c.remove(), 500);
+            f.addEventListener('load', () => f.focus());
+            md.snackbar('Loading Sacred Adventures. Use full screen for the best view.');
+        });
+        $('#fs-btn').addEventListener('click', () => {
+            const el = $('#game-view');
+            if (!document.fullscreenElement) (el.requestFullscreen || el.webkitRequestFullscreen || (() => { })).call(el);
+            else document.exitFullscreen();
+        });
+
+        if (reduceMotion) { const v = $('#hero-video'); v.removeAttribute('autoplay'); v.pause(); }
+
+        // ================= CONTACT FORM (opens email) =================
+        const CONTACT_EMAIL = 'sacredones22@gmail.com';
+        $('#contact-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const n = $('#cf-name').value.trim(), em = $('#cf-email').value.trim(), m = $('#cf-msg').value.trim();
+            if (!m) { md.snackbar('Add a message so we know how to help.'); $('#cf-msg').focus(); return; }
+            const body = m + '\r\n\r\nFrom: ' + n + (em ? ' <' + em + '>' : '');
+            location.href = 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent('Website message from ' + (n || 'a visitor')) + '&body=' + encodeURIComponent(body);
+            md.snackbar('Opening your email app. If nothing opens, write to ' + CONTACT_EMAIL + '.');
+        });
+
+        // ================= CHAT HELPER =================
+        const intents = {
+            greet: { k: ['hello', 'hi', 'hau', 'hey', 'start'], w: 1 },
+            donate: { k: ['donate', 'money', 'help', 'support', 'give', 'fund', 'paypal', 'cash', 'check'], w: 5 },
+            bison: { k: ['bison', 'buffalo', 'tatanka', 'herd', 'animal'], w: 5 },
+            ai_center: { k: ['ai', 'tech', 'computer', 'data', 'nvidia', 'gpu', 'job', 'training'], w: 5 },
+            park: { k: ['park', 'amusement', 'kids', 'recreation', 'heal'], w: 5 },
+            history: { k: ['history', 'sitting bull', 'crazy horse', 'red cloud', 'past', 'ancestor', 'leader', 'legend', 'invention'], w: 5 },
+            mission: { k: ['mission', 'about', 'who', 'what is', 'goal', 'vision'], w: 3 },
+            projects: { k: ['project'], w: 5 },
+            game: { k: ['game', 'play', 'adventure', 'village'], w: 5 },
+            contact: { k: ['contact', 'email', 'phone', 'address', 'where'], w: 4 }
+        };
+        const R = {
+            start: { t: "Hau! (Hello!) I am the Keeper of Knowledge for Sacred Ones. We are the Oceti Sakowin Oyate. I can guide you through our **Projects**, our **History**, our **Game**, or how to **Support** our vision. How can I help you today?", c: ["Our projects", "Donate", "History and culture", "Play the game", "Contact us"] },
+            greet: { t: "Hau! I am here to help. Would you like to hear about our bold new projects like the AI center or the bison release?", c: ["AI center", "Bison", "Donate"] },
+            mission: { t: "Our mission is simple yet powerful: **give them a chance to dream again.** We combine indigenous wisdom with modern technology to create jobs and restore the land.", c: ["Our projects", "Donate"] },
+            projects: { t: "We are building a **youth AI jobs training and data center**, an **ancestral park** for healing, and the **return of the bison**. <a href='#projects'>See all projects</a>", c: ["AI center", "Bison", "Park", "Donate"] },
+            game: { t: "**Sacred Adventures** is our 3D browser game: build your village, meet the people in first person, then manage it from above. <a href='#our-game'>Launch it on this page</a> or <a href='https://www.sacredones.org/SacredAdventures/SacredOnes.html' target='_blank' rel='noopener noreferrer'>open it in a new tab</a>.", c: ["Our projects", "Donate"] },
+            donate: { t: "Wopila (thank you) for your generosity. Your support directly funds the return of the bison and our youth AI training. How would you like to give?", c: ["PayPal", "CashApp", "Check info"] },
+            donate_paypal: { t: "You can donate securely through PayPal here: <a href='https://www.paypal.com/donate?business=sacredones22@gmail.com' target='_blank' rel='noopener noreferrer'>Donate with PayPal</a>", c: ["Back to menu"] },
+            donate_cashapp: { t: "Thank you. Our CashApp is: <a href='https://cash.app/$sacredonez' target='_blank' rel='noopener noreferrer'>$sacredonez</a>", c: ["Back to menu"] },
+            donate_check: { t: "Please mail checks to:<br><strong>Sacred Ones</strong><br>2112 4th Avenue W, Suite 103B<br>Williston, ND 58001<br><em>(We are a 501(c)(3) nonprofit.)</em>", c: ["Back to menu"] },
+            ai_center: { t: "The **Youth AI Jobs Training and Data Center** is established on tribal grounds. It uses green energy and provides high-tech careers for our youth, skipping the industrial age to leap into the digital future.", c: ["Donate to AI", "Other projects"] },
+            bison: { t: "The return of the **Tatanka (bison)** restores our prairie ecosystem and provides food sovereignty.", c: ["Sponsor a bison", "Other projects"] },
+            park: { t: "The **ancestral park** is a nature-based space for healing. No neon lights, just woods, storytelling and traditional games.", c: ["Support the park", "Back to menu"] },
+            history: { t: "We are the **Oceti Sakowin** (Seven Council Fires), often called Sioux. Our history runs deep. Read about our <a href='#guardians'>leaders</a>, our <a href='#legends'>sacred legends</a>, or our <a href='#ingenuity'>inventions</a>.", c: ["Back to start"] },
+            contact: { t: "Email us at <a href='mailto:sacredones22@gmail.com'>sacredones22@gmail.com</a>. We are on the Fort Peck Reservation, and our mailing address is 2112 4th Avenue W, Suite 103B, Williston, ND 58001.", c: ["Back to menu"] },
+            fallback: { t: "I am still learning. I can tell you about our **Projects**, **History**, or how to **Donate**. What interests you?", c: ["Projects", "Donate", "History"] }
+        };
+        const chat = $('#chat'), fab = $('#chat-fab'), msgs = $('#chat-msgs'), chips = $('#chat-chips'), input = $('#chat-input');
+        let ctx = 'start';
+        const fmt = s => s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        function addBot(html) { const d = document.createElement('div'); d.className = 'msg bot'; d.innerHTML = fmt(html); msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; }
+        function addMe(text) { const d = document.createElement('div'); d.className = 'msg me'; d.textContent = text; msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; }
+        function setChips(list) { chips.innerHTML = ''; (list || []).forEach(label => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.addEventListener('click', () => send(label)); chips.appendChild(b); }); msgs.scrollTop = msgs.scrollHeight; }
+        function detect(text) {
+            const l = text.toLowerCase();
+            if (ctx === 'donating') { if (/pay|pal/.test(l)) return 'donate_paypal'; if (/cash|app/.test(l)) return 'donate_cashapp'; if (/check|mail/.test(l)) return 'donate_check'; }
+            if (/back to (menu|start)/.test(l)) return 'start';
+            let best = 'fallback', max = 0;
+            for (const [k, d] of Object.entries(intents)) { let s = 0; d.k.forEach(w => { if (l.includes(w)) s += d.w; }); if (s > max) { max = s; best = k; } }
+            return best;
+        }
+        function send(text) {
+            text = text.trim(); if (!text) return;
+            addMe(text); input.value = ''; chips.innerHTML = '';
+            setTimeout(() => { const i = detect(text); ctx = i === 'donate' ? 'donating' : 'start'; const r = R[i] || R.fallback; addBot(r.t); setChips(r.c); }, 450);
+        }
+        function openChat(open) {
+            chat.classList.toggle('open', open); fab.setAttribute('aria-expanded', open);
+            if (open) { if (!msgs.children.length) { addBot(R.start.t); setChips(R.start.c); } input.focus(); } else fab.focus();
+        }
+        fab.addEventListener('click', () => openChat(!chat.classList.contains('open')));
+        $('#chat-close').addEventListener('click', () => openChat(false));
+        $('#chat-reset').addEventListener('click', () => { msgs.innerHTML = ''; ctx = 'start'; addBot(R.start.t); setChips(R.start.c); });
+        $('#chat-form').addEventListener('submit', e => { e.preventDefault(); send(input.value); });
+        msgs.addEventListener('click', e => { if (e.target.closest('a[href^="#"]')) openChat(false); });
+    </script>
+</body>
+
+</html>

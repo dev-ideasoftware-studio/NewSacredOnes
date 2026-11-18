@@ -1,0 +1,77 @@
+/* Sacred Ones lessons — page styles on top of m3.css */
+.wrap { width: min(1200px, 100% - 40px); margin-inline: auto; }
+.skip { position: absolute; left: 12px; top: -80px; z-index: 500; background: var(--md-primary); color: var(--md-on-primary); padding: 12px 20px; border-radius: var(--md-shape-full); }
+.skip:focus { top: 12px; }
+.md-eyebrow { display: block; font: 600 .8125rem/1.3 var(--md-font-plain); letter-spacing: .08em; text-transform: uppercase; color: var(--md-tertiary); margin-bottom: 10px; }
+.tone-low { background: var(--md-surface-container-low); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.md-measure { max-width: 66ch; }
+
+.lesson-nav { margin-left: auto; display: flex; gap: 4px; }
+.lesson-nav a { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; text-decoration: none; color: var(--md-on-surface-variant); font: 700 .9375rem/1 var(--md-font-plain); }
+.lesson-nav a.on { background: var(--md-tertiary); color: var(--md-on-tertiary); }
+
+.lhero { padding: clamp(28px, 4vw, 48px) 0 clamp(28px, 4vw, 44px); background: var(--md-surface); }
+.lhero-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); align-items: center; }
+.lhero h1 { margin: 6px 0 8px; }
+.lhero .sub { color: var(--md-secondary); font-family: var(--md-font-brand); font-weight: 400; }
+.lhero .intro { margin-top: 18px; max-width: 58ch; }
+.lhero .meta { margin-top: 18px; }
+
+.lfig { margin: 0; }
+.lfig img { width: 100%; height: auto; border-radius: var(--md-shape-lg); background: var(--md-surface-container-high); }
+.lfig.hero img { border-radius: var(--md-shape-xl); box-shadow: var(--md-elev-3); max-height: 560px; object-fit: cover; }
+.lfig figcaption { margin-top: 8px; font: 400 .8125rem/1.45 var(--md-font-plain); color: var(--md-on-surface-variant); }
+.lfig figcaption .cr { opacity: .85; }
+.lfig figcaption a { color: var(--md-primary); }
+
+.lbody { padding: clamp(32px, 4.5vw, 56px) 0; }
+.lgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, .8fr); gap: clamp(28px, 4vw, 56px); align-items: start; }
+.prose h2 { margin: 30px 0 10px; }
+.prose h2:first-child { margin-top: 0; }
+.prose p { font-size: 1.0625rem; line-height: 1.7; max-width: 68ch; }
+.prose p + p { margin-top: 12px; }
+.prose em { font-style: italic; }
+.lside { position: sticky; top: 92px; display: grid; gap: 16px; }
+.side-card { padding: 20px 22px; border-radius: var(--md-shape-lg); background: var(--md-surface-container-low); border: 1px solid var(--md-outline-variant); }
+.side-card.tonal { background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); border: 0; }
+.side-card h3 { margin-bottom: 12px; }
+.terms div { padding: 8px 0; border-top: 1px solid var(--md-outline-variant); }
+.terms div:first-child { border-top: 0; padding-top: 0; }
+.terms dt { font-weight: 700; }
+.terms dd { color: var(--md-on-surface-variant); font-size: .9375rem; }
+.facts { display: grid; gap: 10px; padding-left: 18px; list-style: disc; font-size: .9375rem; line-height: 1.5; }
+
+.lgal { padding: clamp(32px, 4.5vw, 56px) 0; }
+.lgal h2 { margin-bottom: 18px; }
+.gal { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; align-items: start; }
+.gal .lfig img { aspect-ratio: 4/3; object-fit: cover; }
+
+.lreflect { padding: clamp(32px, 4.5vw, 56px) 0; }
+.lreflect .two { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(24px, 4vw, 48px); }
+.reflect { counter-reset: q; display: grid; gap: 12px; }
+.reflect li { counter-increment: q; position: relative; padding: 16px 18px 16px 64px; border-radius: var(--md-shape-md); background: var(--md-surface-container-low); font-size: 1.0625rem; line-height: 1.5; }
+.reflect li::before { content: counter(q); position: absolute; left: 18px; top: 12px; font: 400 1.9rem/1 var(--md-font-brand); color: var(--md-tertiary); }
+
+.llinks { padding: clamp(32px, 4.5vw, 56px) 0; }
+.llinks h2 { margin-bottom: 14px; }
+.links { max-width: 760px; }
+.links .md-list-item { border-radius: var(--md-shape-md); border-bottom: 1px solid var(--md-outline-variant); }
+.pn { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--md-outline-variant); }
+
+.lcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.lcard { display: grid; grid-template-rows: 190px auto; border-radius: var(--md-shape-lg); overflow: hidden; background: var(--md-surface-container-low); text-decoration: none; color: inherit; box-shadow: var(--md-elev-1); transition: box-shadow var(--md-dur-medium), transform var(--md-dur-medium) var(--md-ease-decel); }
+.lcard:hover { box-shadow: var(--md-elev-3); transform: translateY(-2px); }
+.lcard img { width: 100%; height: 100%; object-fit: cover; }
+.lcard .body { display: grid; gap: 4px; padding: 16px 18px 20px; }
+.lcard .md-eyebrow { margin-bottom: 2px; }
+
+.lfoot-in { padding: 28px 0 32px; display: grid; gap: 10px; }
+.lfoot a { color: var(--md-tertiary); }
+
+@media (max-width: 900px) {
+    .lhero-in, .lgrid, .lreflect .two { grid-template-columns: minmax(0, 1fr); }
+    .lfig.hero { order: -1; }
+    .lside { position: static; }
+    .lesson-nav { display: none; }
+}
